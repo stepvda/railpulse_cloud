@@ -1,0 +1,14 @@
+# Local development and testing.
+#
+# The function's own runtime dependencies are in function_app/requirements.txt
+# and are installed on the platform by the remote build; this file is only for
+# this machine.
+
+-r function_app/requirements.txt
+
+# The offline test suite.
+pytest>=8.0
+
+# Loads .env for local runs. Optional at run time — railpulse/config.py guards
+# the import so a missing python-dotenv cannot stop the pipeline in Azure.
+python-dotenv>=1.0

@@ -1,0 +1,532 @@
+# 🚉 RailPulse Cloud — serverless liveboard ETL on Azure
+
+> *We are RailPulse, an urban mobility consulting firm. SNCB/NMBS wants to move
+> their legacy on-premise delay reporting into a modern, cloud-native
+> architecture.*
+
+An automated ETL pipeline that pulls **live departure boards** from the Belgian
+rail network, normalises them into an **Azure SQL** star schema, and keeps the
+whole thing inside a student subscription's free credit. It runs on a **Python
+Azure Function** — one HTTP trigger for on-demand pulls, one timer trigger for
+history.
+
+**Sprint 2 of 4.** Sprint 1 ([`railpulse_sql_analysis`](https://github.com/stepvda/railpulse_sql_analysis))
+normalised 2.17 M scheduled departures from the GTFS static feed into SQLite and
+answered five operational questions in SQL. This sprint moves the *pipeline* to
+the cloud and switches the source from a static timetable to a live feed — so
+that next week's Power BI dashboard has real delays to draw.
+
+|                        |                                                                                   |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| **Source**             | [iRail](https://docs.irail.be/) liveboards — NMBS/SNCB data, CC BY 4.0            |
+| **Warehouse**          | Azure SQL Database, General Purpose **Serverless** (1 vCore max, 0.5 min)         |
+| **Compute**            | Azure Functions, Python 3.11, **Flex Consumption** (serverless)                   |
+| **Grain**              | one row per scheduled departure event, upserted via `MERGE`                        |
+| **Coverage**           | 10 hubs, every 15 min through the weekday peaks (Europe/Brussels)                  |
+| **Cost while running** | ~$54/month, of which 97% is SQL compute · **~$0.28/month paused**                  |
+| **Region**             | France Central — nearest region this student subscription's policy allows          |
+| **Dashboard**          | Streamlit on App Service (F1 Free), reading the BI views                            |
+| **Tests**              | 182, offline, ~1 s — no Azure subscription needed                                   |
+
+---
+
+## The architecture
+
+```mermaid
+flowchart LR
+    subgraph external["api.irail.be  (free, volunteer-run)"]
+        LB["GET /v1/liveboard<br/>~55 departures per hub"]
+        ST["GET /v1/stations<br/>714 stations, once"]
+    end
+
+    subgraph azure["Azure · resource group rg-railpulse-cloud · France Central"]
+        subgraph fn["Function App — Flex Consumption (FC1), Python 3.11"]
+            TIMER["⏱ ingest_timer<br/>0 */15 6-9,16-19 * * 1-5"]
+            HTTP["🌐 /api/ingest<br/>/api/health · /api/stats<br/>/api/migrate"]
+            CODE["railpulse/<br/>irail → transform → loader"]
+        end
+        SQL[("Azure SQL — Serverless<br/>auto-pause 1 h · 2 GB · LRS<br/>6 tables · 8 BI views")]
+        STORE[("Storage — LRS<br/>runtime state")]
+    end
+
+        WEB["🖥️ App Service — F1 Free<br/>Streamlit dashboard, 9 pages"]
+    end
+
+    subgraph next["Sprint 3-4"]
+        BI["Power BI"]
+        AI["AI assistant<br/>text-to-SQL"]
+    end
+
+    LB --> CODE
+    ST --> CODE
+    TIMER --> CODE
+    HTTP --> CODE
+    CODE -- "MERGE on natural key" --> SQL
+    fn -.-> STORE
+    SQL -- "8 BI views, read-only" --> WEB
+    WEB -. "run ingest (key-protected)" .-> HTTP
+    SQL --> BI
+    SQL --> AI
+```
+
+Data flows one way: **fetch → parse → stage → MERGE**. The parse step is pure
+functions with no I/O, which is why most of this project can be tested without an
+Azure subscription.
+
+---
+
+## Quick start
+
+```bash
+# 0. Once: the toolchain and an offline test run
+brew install azure-cli
+make venv && make test           # 182 tests, no cloud needed
+
+# 1. Create everything, with the cost settings baked in
+az login                         # the @becode.education account
+make provision                   # resource group, serverless SQL, storage, Function App
+
+# 2. Ship the code
+make deploy                      # zips function_app/ + sql/, remote pip install
+
+# 3. Prove it works end to end (includes the idempotency check)
+make smoke
+
+# 4. Publish the dashboard
+make web                         # provision + deploy the Streamlit app
+```
+
+Then, day to day:
+
+```bash
+make ingest      # poll every hub now
+make stats       # row counts, data quality, hub leaderboard
+make health      # per-station freshness
+make pause       # Friday: stop the compute, keep the data
+```
+
+Prefer to click? [`docs/portal_walkthrough.md`](docs/portal_walkthrough.md) is the
+same resources built by hand in the portal, blade by blade, with every
+cost-critical field called out.
+
+---
+
+## Verified live
+
+Deployed to `rg-railpulse-cloud` (France Central) and checked end to end by
+`make smoke` — all 7 stages passed:
+
+| stage | result |
+| --- | --- |
+| schema applied | 6 tables, 8 views, 10 indexes, 15 seeded vehicle types |
+| station catalogue | **714 stations** in one API call |
+| first ingest, 10 hubs | **311 departures**, 10/10 hubs succeeded, 0 failed |
+| **idempotency: second ingest** | **0 inserted, 311 revised** — repeated polls revise, never duplicate |
+| data quality | 0.32% unknown platform · 14.79% unreported occupancy · 0 rows observed only once |
+| **timer trigger** | fired on schedule and wrote **10 `trigger_source='timer'` runs** — 85 new departures, 219 revised |
+
+A scheduled run then added 85 further departures and revised 219 existing ones,
+so `liveboard_records` grew to 396 rows without a single duplicate — the timer and
+the MERGE working together exactly as designed.
+
+The punctuality leaderboard on that first snapshot already separates the hubs —
+Ghent-Sint-Pieters at 162.9 s mean delay and 85.7% on time, against Leuven and
+Charleroi at 0.0 s and 100%. Brussels-Midi carries the most departures (56) and
+the second-worst mean delay (101.5 s), which is the sprint-1 finding about
+Brussels being the network's pressure point showing up again in live data.
+
+Getting there took nine obstacles that no tutorial mentions — a region policy
+banning West Europe, a Function host that could never issue an API key, an Azure
+CLI command that cannot deploy to the plan Azure recommends, and a schedule
+setting of mine that silently did nothing, among them.
+Each one is written up with its symptom, its real cause and its fix in
+**[`docs/deployment_notes.md`](docs/deployment_notes.md)**.
+
+---
+
+## The endpoints
+
+Base URL: `https://<your-function-app>.azurewebsites.net`
+
+| endpoint | auth | what it does |
+| --- | --- | --- |
+| `GET /api/ping` | **anonymous** | liveness. Touches **no database** — deliberately (see below) |
+| `GET /api/ingest` | key | poll Brussels-Central and load it |
+| `GET /api/ingest?station=Leuven` | key | poll one station by name or id |
+| `POST /api/ingest?hubs=all` | key | poll all 10 configured hubs |
+| `GET /api/health` | key | row counts + per-station freshness; `207` if any hub is stale |
+| `GET /api/stats` | key | data-quality summary, hub leaderboard, recent runs |
+| `POST /api/migrate` | key | apply `sql/*.sql` — idempotent |
+| `POST /api/seed-stations` | key | load the 714-station catalogue |
+| ⏱ `ingest_timer` | — | the scheduled pull |
+
+```bash
+KEY=$(az functionapp keys list -n <app> -g rg-railpulse-cloud --query functionKeys.default -o tsv)
+curl -X POST -H "x-functions-key: $KEY" "https://<app>.azurewebsites.net/api/ingest?hubs=all"
+```
+
+`/api/ingest` returns **207 Multi-Status** when some hubs load and others fail. A
+partial failure genuinely is neither success nor failure, and collapsing it into
+`200` would leave a monitor blind to one hub that has been broken for a week.
+
+**Why `/api/ping` is the only anonymous route, and why it never queries SQL:** a
+liveness probe that touched the database every five minutes would prevent the
+serverless database from ever auto-pausing, and would quietly become the largest
+line on the bill. Every other route needs a function key because it either writes
+to the database or spends someone else's free API quota under our `User-Agent`.
+
+**Why the app can migrate itself.** Applying DDL from a laptop needs the Microsoft
+ODBC driver installed locally *and* a firewall rule for whatever IP you have
+today. The Function App already has both. `POST /api/migrate` is therefore a
+convenience, not the only route — the same files run fine from the portal's Query
+editor, from VS Code, or from `scripts/local_cli.py`.
+
+---
+
+## The dashboard
+
+A Streamlit app on App Service reading the BI views — the live counterpart to
+sprint 1's dashboard over the static timetable. Nine pages:
+
+| page | what it answers |
+| --- | --- |
+| Overview | KPI header, departures by local hour, delay distribution, a map of the network |
+| Live departures | one row per departure event, filterable; shows delay growth and platform changes |
+| Hub leaderboard | which city runs the most reliable station — **unanswerable in sprint 1** |
+| Peak hours | sprint 1's Q1 on live data, normalised by days observed |
+| Platform bottlenecks | sprint 1's Q2 on live data, plus the three-Brussels-stations comparison |
+| Delay evolution | did the delay grow as departure approached? Repeat offenders, minutes of notice |
+| Services & destinations | service-class punctuality, busiest destinations, morning-only toggle |
+| Data quality | what is missing, as a number |
+| Pipeline | per-station freshness, insert-vs-revise proof, and one button to trigger a load |
+
+**The anti-drift seam moved down a layer.** Last week every figure came from a
+statement loaded *verbatim* out of a graded `.sql` file, so report and deliverable
+could not disagree. That does not transfer to interactive pages — a parameterised
+query is not a file you can paste into a client. So instead, **every statement in
+`webapp/queries.py` reads a view from [`sql/03_views.sql`](sql/03_views.sql)**,
+which is where the definitions live: what counts as on time, whether a
+cancellation is in the denominator, which local hour a departure belongs to. The
+dashboard cannot disagree with the warehouse because it never computes them — and
+Power BI in sprint 3 will connect to the same views and agree by construction.
+A test (`test_the_dashboard_reads_views_not_base_tables`) fails if a future query
+goes round them.
+
+What carried over: **every figure has a "Show the SQL" expander**, pandas is a
+carrier and nothing more (no groupby, merge, pivot or mask anywhere in `webapp/`),
+and the app is **read-only by construction** — `data.query` refuses any statement
+that is not a `SELECT`/`WITH`, which is a hard stop rather than a convention
+because the connection it holds does have write permission.
+
+The one control that changes state is the Pipeline page's **Run ingest now**
+button. It calls the Function App's key-protected endpoint; the key lives in an
+App Service setting and never reaches the browser. Unset it and the button is
+replaced by a note — the right default for a public URL.
+
+Full rationale, including why last week's 980 MB SQLite pages are not deployed:
+**[`docs/webapp.md`](docs/webapp.md)**.
+
+---
+
+## The schema
+
+Six tables: one fact, four dimensions, one audit log. Full rationale — every
+column, every constraint, every rejected alternative — in
+**[`docs/schema.md`](docs/schema.md)**.
+
+```mermaid
+erDiagram
+    stations ||--o{ platforms : has
+    stations ||--o{ liveboard_records : "departs from / is destination of"
+    vehicle_types ||--o{ vehicles : classifies
+    vehicles ||--o{ liveboard_records : operates
+    platforms ||--o{ liveboard_records : "is used by"
+    ingestion_runs ||--o{ liveboard_records : "first / last observed"
+```
+
+| table | grain | rows/day |
+| --- | --- | --- |
+| `liveboard_records` | **one scheduled departure event** | ~5 000 |
+| `stations` | station (714, seeded in one API call) | — |
+| `platforms` | station × platform, **discovered** as used | — |
+| `vehicles` | train run (`BE.NMBS.IC1832`) | ~1 500 |
+| `vehicle_types` | service class, **self-extending** | 15 |
+| `ingestion_runs` | one API call + load | ~320 |
+
+### The decision that shapes everything: the grain
+
+A liveboard returns the *next ~55 departures*. Poll every 15 minutes and the 17:42
+to Antwerp comes back a dozen times, its delay changing. Two models were possible:
+
+|  | append every observation | **one row per departure event** ← chosen |
+| --- | --- | --- |
+| rows after a week | ~12× | 1× |
+| "how many trains left today?" | `ROW_NUMBER() … = 1` in every query | `COUNT(*)` |
+| re-running the same poll | duplicates everything | no-op |
+| delay trajectory | full | first and last only |
+
+The second, with the observation metadata kept **on the row** —
+`first_seen_utc`, `last_seen_utc`, `observation_count`, and `delay_first_seen_s`
+beside the current `delay_seconds`. So the interesting question survives:
+
+```sql
+-- Which trains were fine when we first saw them and fell apart later?
+SELECT vehicle_name, station_name, delay_first_seen_s, delay_seconds, delay_growth_s
+FROM   dbo.v_departures
+WHERE  delay_growth_s > 300
+ORDER BY delay_growth_s DESC;
+```
+
+What is lost is the *intermediate* trajectory: 0 → 3 → 9 → 4 minutes is recorded
+as 0, 4, "seen four times". Accepted because the database is capped at 2 GB and the
+consumer is a dashboard, not a forecasting model — and stated here rather than
+discovered later.
+
+### Idempotency: one MERGE, three details
+
+The nice-to-have asks that "recurring timer runs don't corrupt your dataset".
+Every load is a single `MERGE` on the natural key
+`(station_id, vehicle_id, scheduled_departure_utc)`:
+
+1. **`WITH (HOLDLOCK)`** — without it, MERGE is documented as racy: two concurrent
+   runs can both find no row and both insert. The timer and a manual `POST` can
+   genuinely overlap.
+2. **`WHEN MATCHED AND t.last_seen_run_id <> s.run_id`** — replaying the *same* run
+   is a true no-op, so a retry cannot inflate `observation_count`. A genuinely
+   later poll does increment it.
+3. **The source is deduplicated first**, and the drops are *counted* into
+   `rows_skipped`. MERGE raises error 8672 and abandons the entire statement if two
+   source rows match one target row, so one repeated departure would otherwise
+   fail the whole load.
+
+`make smoke` proves it against the live deployment: **run the ingest twice and the
+second run reports `rows_updated > 0` with almost no inserts.**
+
+### Three details worth a second look
+
+**Cancellations are `NULL`, not zero.** `is_on_time_2min` / `is_on_time_6min` are
+`NULL` for a cancelled train, so `COUNT(is_on_time_6min)` — the natural
+denominator — excludes cancellations automatically, in every query, without
+anyone remembering `WHERE is_canceled = 0`. A cancelled train is not late; it is
+absent. Counting it as a 0-second delay would flatter the operator.
+
+**Local time is a stored column, not a conversion.** "Which hour is busiest" is a
+question about the clock on the platform wall. `AT TIME ZONE` is non-deterministic
+in Azure SQL, so it cannot be a `PERSISTED` computed column and cannot be indexed.
+`scheduled_departure_local` is computed once in the loader with `zoneinfo`, and a
+test asserts **+1 in January and +2 in July** so a future "simplification" to a
+fixed offset fails the suite instead of silently moving the answer by an hour.
+
+**The type reference table extends itself.** A service class the project has never
+seen is inserted with `is_seeded = 0` rather than failing the foreign key. New
+data must never be able to stop the pipeline; it should surface as an undocumented
+code in `v_vehicle_type_performance`. Reject bad data, never unfamiliar data.
+
+### The BI contract
+
+Next week's dashboard connects to views, never to base tables — `v_departures`
+(the wide flat one), `v_station_punctuality`, `v_hourly_pressure`,
+`v_platform_pressure`, `v_delay_distribution`, `v_vehicle_type_performance`,
+`v_ingestion_health`, `v_data_quality`. A view is the seam that lets the physical
+model change without breaking someone else's report, and it is where the
+*definitions* live — what counts as on time, whether a cancellation is in the
+denominator. Encoded once, so two dashboards cannot quietly disagree.
+
+---
+
+## Cost: the requirement that contradicts itself
+
+The brief asks for a timer **every 15 or 30 minutes** *and* an auto-pause delay of
+**exactly one hour**. Round the clock, those cannot both hold: a timer every 15
+minutes means the database is never idle for an hour, so it never pauses, so it
+bills ~0.5 vCore continuously — **~$190/month**, and the $100 credit is gone in
+about two weeks.
+
+This project resolves it by sampling the **weekday peaks** at 15-minute
+resolution and letting the database sleep the rest of the time:
+
+| schedule | DB awake/weekday | est. compute | credit lasts |
+| --- | --- | --- | --- |
+| every 15 min, 24/7 | 24 h | ~$190/mo | ~2 weeks |
+| every 60 min, 24/7 | 24 h *(still never idles an hour)* | ~$190/mo | ~2 weeks |
+| **15 min, 06–09 + 16–19, Mon–Fri** ← default | ~9.5 h | **~$54/mo** | ~2 months |
+| paused (`make pause`) | 0 h | **~$0.28/mo** | indefinitely |
+
+Note rows 1 and 2: **hourly polling costs the same as 15-minute polling** and
+collects a quarter of the data. Within a capture window the cadence is free — what
+costs money is the width of the window plus the one-hour pause tail. Anyone
+reaching for "poll less often to save money" without checking the pause threshold
+makes the dataset worse for nothing.
+
+The schedule is an app setting (`INGEST_SCHEDULE`), so the trade is an operational
+decision with the bill in view, not a redeploy. Full arithmetic, the settings that
+matter, and the buffered-write design a production version would use:
+**[`docs/cost_control.md`](docs/cost_control.md)**.
+
+---
+
+## Running on a paused database
+
+This is the cloud-specific problem that most of `railpulse/database.py` exists to
+solve, and it is worth stating because code written as if Azure SQL were an
+ordinary database fails every single morning.
+
+When the first timer run of the day connects, the database is **paused**. The
+connection does not queue — it fails, typically with error **40613** ("Database is
+not currently available"), while the platform starts a resume that takes 30–60
+seconds. Then for a few seconds it may throttle (40501, 10928/10929), and a
+platform reconfiguration can drop a live connection (40197, 4060).
+
+None of those are bugs and none should lose a poll. So:
+
+* `Connection Timeout=60` in the connection string — a 30-second default turns
+  every cold start into a failure;
+* transient faults are classified by SQL error number **and** ODBC SQLSTATE
+  (a resume timeout arrives as `HYT00` with error number 0), and retried with
+  exponential backoff on a **fresh** connection, because the old handle is dead;
+* a wrong password (18456) or a missing table (208) is **not** transient and fails
+  immediately — retrying it five times only turns a clear failure into a slow one.
+
+---
+
+## Repository layout
+
+```
+├── function_app/                 # the deployment root — this is /home/site/wwwroot
+│   ├── function_app.py           # triggers: 6 HTTP + 1 timer
+│   ├── host.json                 # 9-min timeout, retry policy, extension bundle
+│   ├── requirements.txt          # azure-functions, pyodbc, requests, tzdata
+│   └── railpulse/
+│       ├── config.py             # every env var, read once, secret never logged
+│       ├── hubs.py               # 10 verified station ids + the RAILPULSE_HUBS override
+│       ├── irail.py              # the only module that touches the network
+│       ├── transform.py          # JSON → typed rows. Pure. No I/O, no clock.
+│       ├── database.py           # connections, transient-fault retry, GO splitting
+│       ├── loader.py             # staging tables + the MERGE statements
+│       ├── pipeline.py           # orchestration, transactions, the audit trail
+│       ├── migrations.py         # applying sql/*.sql
+│       └── reporting.py          # read-only snapshots for /health and /stats
+├── sql/
+│   ├── 01_schema.sql             # 6 tables, idempotent DDL
+│   ├── 02_indexes.sql            # 10 indexes, 3 of them filtered; FK support
+│   ├── 03_views.sql              # the 8 BI views
+│   ├── 04_seed_reference.sql     # vehicle_types
+│   └── analysis/                 # sprint-1 questions, re-asked on live data
+├── azure/
+│   ├── provision.sh              # every resource, cost settings baked in, idempotent
+│   ├── deploy.sh                 # package + zip deploy with remote build
+│   ├── smoke_test.sh             # 7 checks incl. the idempotency test
+│   └── teardown.sh               # pause (keeps data) | delete
+├── webapp/                       # the Streamlit dashboard (App Service)
+│   ├── app.py                    # 9 pages; a renderer, no analysis
+│   ├── data.py                   # pymssql, read-only by construction
+│   ├── queries.py                # every statement, all over the BI views
+│   └── startup.sh                # the App Service entry point
+├── scripts/local_cli.py          # run the pipeline / the analysis SQL from a laptop
+├── tests/                        # 118 offline tests + 3 recorded API payloads
+└── docs/
+    ├── schema.md                 # the schema, at length
+    ├── cost_control.md           # the arithmetic
+    ├── portal_walkthrough.md     # the manual build, blade by blade
+    ├── webapp.md                 # the dashboard: what changed from sprint 1
+    ├── deployment_notes.md       # the 10 things that fought back, and why
+    └── api_notes.md              # the API contract and its six quirks
+```
+
+---
+
+## Tests
+
+```bash
+make test        # 118 tests, 0.2 s, no network, no Azure, no ODBC driver
+```
+
+Three groups, each aimed at a class of mistake rather than at a function:
+
+**`test_transform.py`** — parsing, against **recorded** payloads from the live API
+rather than hand-written samples. Every quirk defended against is present because
+the feed really does it: numbers as strings, `"?"` platforms, `S32` types,
+occupancy nested in an object, a one-element array collapsed to a bare object.
+The load-bearing assertions are that the polled station becomes the *origin* and
+not the destination, that `time` stays the schedule and `delay` stays separate,
+that nothing vanishes silently (`kept + dropped == returned`), and the DST test
+above.
+
+**`test_hubs_and_client.py`** — the hub ids are pinned because of a real mistake
+caught during development: UIC `008844008` was assumed to be Charleroi-Central and
+is in fact **Verviers-Central**. That error does not raise — it returns a
+perfectly plausible liveboard for the wrong city. The client tests use a fake
+session: a test that calls `api.irail.be` is slow, consumes someone else's free
+quota, and fails on a train.
+
+**`test_sql_contract.py`** — the one that earns its keep. The DDL lives in
+`.sql` files, the INSERT and UPDATE lists live in Python strings, and nothing
+connects them: a rename that misses one side fails at run time, in the cloud,
+inside a MERGE. These tests parse both sides and compare them — every column the
+loader writes must exist in the schema, every column it reads must exist in the
+staging DDL, the MERGE's `ON` clause must match the `UNIQUE` constraint, every
+MERGE must hold `HOLDLOCK`, `first_seen_*` must never appear in an `UPDATE SET`,
+and no view may `SUM` a `BIT` (T-SQL cannot). They cannot prove the SQL is
+correct — only a real database can — but they catch the drift that actually
+happens.
+
+---
+
+## How this maps to the brief
+
+| requirement | where |
+| --- | --- |
+| **Must**: serverless Azure SQL, firewall for local IP + Azure services | `azure/provision.sh` §2–4 · [walkthrough §2](docs/portal_walkthrough.md#2-azure-sql-database--the--cost-critical-blade) |
+| **Must**: schema with `stations`, `vehicles`, `liveboard_records`, real types and relationships | [`sql/01_schema.sql`](sql/01_schema.sql) · [`docs/schema.md`](docs/schema.md) |
+| **Must**: Python 3.10+ Function App, Consumption, HTTP trigger hitting a major hub | `function_app.py:ingest` — defaults to Brussels-Central. Runs on **Flex** Consumption, not the classic Y1 plan; both are serverless pay-per-execution, and [why](docs/deployment_notes.md#5-the-linux-consumption-host-could-not-issue-function-keys--the-blocker) |
+| **Must**: connection string in Environment variables, read via `os.environ` | `railpulse/config.py` — the only module that reads the environment |
+| **Must**: comprehensive README on the schema choice | this file + [`docs/schema.md`](docs/schema.md) |
+| **Nice**: timer trigger, CRON | `function_app.py:ingest_timer`, `INGEST_SCHEDULE` |
+| **Nice**: idempotency, no duplicates on recurring runs | `MERGE` on the natural key; verified by `make smoke` step 5 |
+| **Nice**: multi-hub | 10 verified hubs in `railpulse/hubs.py`, extendable by app setting |
+| **Cost**: serverless everywhere, auto-pause configured | `provision.sh`, and [why 24/7 polling breaks it](docs/cost_control.md) |
+| **Code**: clean modular functions | 9 modules split so that the parsing layer has no I/O and is testable offline |
+
+---
+
+## Limitations, honestly
+
+* **The dataset is a sample, not a census.** The default schedule captures weekday
+  peaks. Any "busiest hour" figure must be normalised by days observed per hour
+  (`v_hourly_pressure.departures_per_day` does this) — a raw `COUNT(*)` per hour
+  would report the *capture schedule* as the peak, which is circular.
+  `sql/analysis/a1_peak_hour.sql` is written around that.
+* **Delays are read at the last observation, not at departure.** A departure whose
+  last sighting was 10 minutes before it left carries the delay predicted then.
+  `has_left` marks the ones confirmed departed; `observed_once` in
+  `v_data_quality` counts the ones that never had a chance to be revised.
+* **Occupancy is crowd-sourced** by iRail's app users — sparse and
+  self-selecting. `pct_occupancy_unknown` is the number that says whether it is
+  worth reading.
+* **Alerts are counted, not stored.** The liveboard is fetched with
+  `alerts=true`, and `alerts_seen` reaches the run log, but the text is not
+  shredded into tables. Multilingual alert text is a 1NF problem needing two more
+  tables, and no observed payload has carried one yet.
+* **Arrivals, train composition, and intermediate stops are out of scope** — each
+  needs one API call *per train* against a free volunteer-run service.
+* **Dimensions are SCD type 1.** A renamed station loses its old name;
+  `first_seen_utc`/`last_seen_utc` are the only history.
+* **No CI.** `make redeploy` runs compile + tests before publishing, which is the
+  same guard by hand. A GitHub Actions workflow is a 20-line addition and the
+  obvious next step.
+
+---
+
+## Data source and licence
+
+Departure data from **[iRail](https://docs.irail.be/)**, which republishes
+NMBS/SNCB open data under **CC BY 4.0**. Any published output should credit:
+
+> Data: [iRail](https://irail.be) / NMBS-SNCB, CC BY 4.0.
+
+iRail is free and volunteer-run. This client identifies itself with a contactable
+`User-Agent`, keeps 0.4 s between requests (iRail asks for under 3/second), makes
+~320 requests/day, and retries only genuinely transient statuses. See
+[`docs/api_notes.md`](docs/api_notes.md).
+
+Code in this repository: MIT.

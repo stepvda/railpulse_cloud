@@ -1,0 +1,22 @@
+# Azure Functions deployment requirements — installed by the remote (Oryx) build.
+# Deliberately minimal: every package here is downloaded and unpacked on every
+# cold start of a Consumption-plan worker, so an unused dependency is a latency
+# and a cost, not just clutter.
+
+# The Functions Python worker library (v2 programming model decorators).
+azure-functions>=1.21.0,<2
+
+# Azure SQL access. The ODBC Driver 18 for SQL Server that this binds to is
+# already present in the Azure Functions Python runtime image — which is why no
+# driver installation step appears anywhere in this repository.
+pyodbc>=5.1,<6
+
+# The iRail HTTP client.
+requests>=2.32,<3
+
+# The IANA time-zone database, for the UTC -> Europe/Brussels conversion in
+# transform.py. Python's zoneinfo falls back to the operating system's tz files;
+# they exist in the current runtime image, but shipping the data makes the
+# conversion independent of the base image, and a silently wrong local hour is
+# the kind of bug nobody notices until the dashboard is already wrong.
+tzdata>=2024.1

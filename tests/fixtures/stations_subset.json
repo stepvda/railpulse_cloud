@@ -1,0 +1,62 @@
+{
+ "version": "1.4",
+ "timestamp": "1785138270",
+ "station": [
+  {
+   "@id": "http://irail.be/stations/NMBS/008400319",
+   "id": "BE.NMBS.008400319",
+   "name": "'s Hertogenbosch",
+   "locationX": "5.294278",
+   "locationY": "51.69042",
+   "standardname": "'s Hertogenbosch"
+  },
+  {
+   "@id": "http://irail.be/stations/NMBS/008821006",
+   "id": "BE.NMBS.008821006",
+   "name": "Antwerp-Central",
+   "locationX": "4.421101",
+   "locationY": "51.2172",
+   "standardname": "Antwerpen-Centraal"
+  },
+  {
+   "@id": "http://irail.be/stations/NMBS/008813003",
+   "id": "BE.NMBS.008813003",
+   "name": "Brussels-Central",
+   "locationX": "4.356801",
+   "locationY": "50.845658",
+   "standardname": "Brussel-Centraal/Bruxelles-Central"
+  },
+  {
+   "@id": "http://irail.be/stations/NMBS/008814001",
+   "id": "BE.NMBS.008814001",
+   "name": "Brussels-South/Brussels-Midi",
+   "locationX": "4.336531",
+   "locationY": "50.835707",
+   "standardname": "Brussel-Zuid/Bruxelles-Midi"
+  },
+  {
+   "@id": "http://irail.be/stations/NMBS/008872009",
+   "id": "BE.NMBS.008872009",
+   "name": "Charleroi-Central",
+   "locationX": "4.438567",
+   "locationY": "50.40471",
+   "standardname": "Charleroi-Central"
+  },
+  {
+   "@id": "http://irail.be/stations/NMBS/008892007",
+   "id": "BE.NMBS.008892007",
+   "name": "Ghent-Sint-Pieters",
+   "locationX": "3.710675",
+   "locationY": "51.035896",
+   "standardname": "Gent-Sint-Pieters"
+  },
+  {
+   "@id": "http://irail.be/stations/NMBS/008841004",
+   "id": "BE.NMBS.008841004",
+   "name": "Liège-Guillemins",
+   "locationX": "5.566695",
+   "locationY": "50.62455",
+   "standardname": "Liège-Guillemins"
+  }
+ ]
+}

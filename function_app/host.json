@@ -1,0 +1,26 @@
+{
+  "version": "2.0",
+  "functionTimeout": "00:09:00",
+  "logging": {
+    "logLevel": {
+      "default": "Information"
+    },
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "maxTelemetryItemsPerSecond": 5,
+        "excludedTypes": "Request;Exception"
+      }
+    }
+  },
+  "retry": {
+    "strategy": "exponentialBackoff",
+    "maxRetryCount": 2,
+    "minimumInterval": "00:00:15",
+    "maximumInterval": "00:01:00"
+  },
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "[4.*, 5.0.0)"
+  }
+}

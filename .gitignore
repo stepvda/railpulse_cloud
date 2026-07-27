@@ -1,0 +1,50 @@
+# ---------------------------------------------------------------------------
+# Secrets. The first two entries are the important ones in this repository.
+# ---------------------------------------------------------------------------
+# Written by azure/provision.sh: contains the SQL admin password and the full
+# connection string.
+.azure-railpulse.env
+# The Functions local development settings — the local equivalent of App
+# Settings, and therefore the other place a password lives.
+function_app/local.settings.json
+.env
+*.pem
+*.key
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ---------------------------------------------------------------------------
+# Azure Functions / deployment artefacts
+# ---------------------------------------------------------------------------
+bin/
+obj/
+.python_packages/
+*.zip
+# Copied into the deployment package by azure/deploy.sh. The canonical SQL lives
+# at the repository root; a second committed copy would drift.
+function_app/sql/
+
+# ---------------------------------------------------------------------------
+# Query output
+# ---------------------------------------------------------------------------
+output/*.csv
+
+# ---------------------------------------------------------------------------
+# Editors / OS
+# ---------------------------------------------------------------------------
+.DS_Store
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,27 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "//": "Copy to local.settings.json and fill in. NEVER commit local.settings.json — it is gitignored, and it is the one file in this repo that would hold a password.",
+
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+
+    "//SQL": "The connection string. In Azure this lives in Function App -> Settings -> Environment variables, not here. Copy the ODBC form from the portal: SQL database -> Settings -> Connection strings -> ODBC, then replace the password placeholder.",
+    "SQL_CONNECTION_STRING": "Driver={ODBC Driver 18 for SQL Server};Server=tcp:sql-railpulse-XXXX.database.windows.net,1433;Database=railpulse;Uid=railpulse_admin;Pwd=REPLACE_ME;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=60;",
+
+    "//SCHEDULE": "NCRONTAB, six fields (seconds first). Default samples the weekday peaks so the serverless database can still auto-pause; see docs/cost_control.md before changing it to round-the-clock.",
+    "INGEST_SCHEDULE": "0 */15 6-9,16-19 * * 1-5",
+    "WEBSITE_TIME_ZONE": "Europe/Brussels",
+
+    "//HUBS": "Optional. Comma-separated station ids, UIC codes or labels. Empty means the ten default hubs in railpulse/hubs.py.",
+    "RAILPULSE_HUBS": "",
+
+    "//IRAIL": "iRail asks every client to identify itself contactably. Put a real address here.",
+    "IRAIL_USER_AGENT": "RailPulseCloud/1.0 (BeCode data-engineering exercise; you@example.com)",
+    "IRAIL_LANG": "en",
+
+    "//TUNING": "Defaults are in railpulse/config.py; override only with a reason.",
+    "SQL_LOGIN_TIMEOUT": "60",
+    "SQL_MAX_ATTEMPTS": "5"
+  }
+}

@@ -1,0 +1,21 @@
+# App Service deployment requirements — installed by the remote (Oryx) build.
+
+streamlit>=1.36,<2
+altair>=5.3,<6
+
+# pandas carries already-aggregated rows from the driver to Altair and nothing
+# else. There is no groupby, merge, pivot or boolean-mask filter anywhere in
+# webapp/ — every number is computed by SQL Server. Same constraint as sprint 1,
+# where the challenge forbade pandas for filtering/aggregating and allowed it
+# "as a way to visualize the data".
+pandas>=2.2,<3
+
+# Azure SQL access. NOT pyodbc: the App Service Python image does not ship the
+# Microsoft ODBC driver (the Azure Functions image does, which is why the
+# Function App uses pyodbc). pymssql is a pip wheel with FreeTDS statically
+# bundled, so it needs no system driver and no apt-get in a startup script.
+pymssql>=2.3,<3
+
+# Only for the "run ingest now" button, which calls the Function App's own
+# key-protected HTTP endpoint.
+requests>=2.32,<3

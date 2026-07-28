@@ -275,41 +275,67 @@ $ az webapp show --query "{state:state, usageState:usageState}"
 Kudu is part of the same site, so the deployment API answered 403 too — the app
 could no longer be fixed *or* redeployed.
 
-**Cause — a chain, and the first link was mine.**
+**Cause — a chain, and the first link was mine.** It took two days and three
+theories to get to the bottom of it, so all three are recorded: being wrong twice
+in public is cheaper than leaving a plausible-looking wrong explanation in the
+repository.
 
-1. `provision_webapp.sh` set the startup command to
-   `bash /home/site/wwwroot/startup.sh` **at provision time**, when no code had
-   been deployed and that file did not exist.
-2. The container therefore exited **127** ("command not found") after ~16 s. App
-   Service's documented response is *"Failed to start site. Revert by stopping
-   site"* — which stops Kudu as well.
-3. Every restart attempt burned CPU. The plan's usage counter later showed
-   **`WP stop requests: 19`**.
-4. F1 Free allows **60 CPU-minutes per day**. Between the failed starts and the
-   `pip install` of streamlit + pandas + pymssql (188 MB written), it was gone.
-5. Exhausted, F1 sets `state = QuotaExceeded` and answers 403 to everything. It
-   is **not clearable** — not by `start`, `restart` or `config set`. It resets at
-   UTC midnight.
+The real cause: **an absolute startup command naming a file that is never on
+disk.** With an Oryx build, `/home/site/wwwroot` contains only the *compressed*
+build output — verified via Kudu's VFS API once a paid tier made it reachable:
 
-The 127 itself had two causes worth recording separately, because either alone
-produces it: the App Service Python image provides **`python3`, not `python`**,
-and a *custom* startup command does not run with Oryx's `antenv` virtualenv
-activated, so `streamlit` is not importable even once the interpreter is found.
-`webapp/startup.sh` now resolves the interpreter with `command -v` and sources
-`antenv/bin/activate` when present, and prints both to the container log so the
-next failure of this kind is one log read away.
+```
+$ curl .../api/vfs/site/wwwroot/
+  .ostype                 16
+  hostingstart.html       3269
+  oryx-manifest.toml      261
+  output.tar.zst          160176345      <- the entire app, compressed
+  requirements.txt        931
+```
 
-**Fix, in the scripts rather than in a runbook.**
+No `app.py`, no `startup.sh`, no `antenv`. The platform extracts that archive to
+a temp directory at container start, activates the virtualenv inside it, and runs
+the startup command **from there**. So `bash /home/site/wwwroot/startup.sh` names
+a path that never exists → exit 127 → App Service *"Failed to start site. Revert
+by stopping site"* → Kudu goes down with it → the restart loop burns the F1 Free
+plan's 60 CPU-minutes/day → `state = QuotaExceeded`, 403 to everything including
+the deployment API, unclearable until UTC midnight.
 
-* `provision_webapp.sh` now sets a startup command that **cannot fail and exposes
-  nothing** — one line of text served from an empty temp directory, not the
-  source tree. A fresh app therefore starts cleanly with no code on it, and Kudu
-  stays reachable.
-* `deploy_webapp.sh` switches to the real Streamlit command **only after** the
-  publish and build have succeeded, i.e. once `startup.sh` is genuinely on disk.
-* `deploy_webapp.sh` also checks the site state up front and, on
-  `QuotaExceeded`, says so plainly with both remedies (wait for the reset, or
-  `--sku B1` at ~\$0.018/hour) instead of failing later on a mystery 403.
+The **decisive clue, once the log was readable**: not one of `startup.sh`'s own
+`startup:` diagnostic lines appeared anywhere in it. The script was never reached.
+That immediately eliminated everything *inside* the script and pointed at the
+command that invokes it.
+
+Two earlier theories, both plausible, both wrong — and both cost a day:
+
+1. *"The startup command references a file that does not exist **yet**, because
+   provision runs before deploy."* True at that moment, and a real ordering bug
+   worth fixing, but not the cause: the file is never there, deployed or not.
+2. *"The image ships `python3`, not `python`, and a custom startup command does
+   not inherit Oryx's activated `antenv`."* Both are reasonable readings of the
+   docs. Neither mattered, because the script never ran.
+
+**Fix.**
+
+* The startup command is now **relative**: `bash startup.sh`, resolved against
+  whatever directory the platform extracts the app into.
+* `startup.sh` no longer `cd`s to `/home/site/wwwroot` — that is where the
+  tarball lives, not the app.
+* `provision_webapp.sh` sets a placeholder that cannot fail and exposes nothing
+  (one line of text from an empty temp directory, *not* the source tree), so a
+  fresh app starts cleanly with no code on it and Kudu stays reachable.
+* `deploy_webapp.sh` installs the real command only after the build succeeds, and
+  reports `QuotaExceeded` up front with both remedies instead of failing later on
+  a mystery 403.
+* Two tests now encode it: `test_no_script_assumes_the_app_lives_in_wwwroot` and
+  `test_deploy_installs_the_real_startup_command_after_publishing`.
+
+**On the diagnosis itself.** F1's failure mode is what made this expensive: when
+the quota is exhausted, Kudu 403s, so the container log that names the exit code
+is unreachable — the platform hides the evidence for the failure it is punishing
+you for. Thirty minutes on B1 (~\$0.01, billed hourly) made the log readable and
+the cause obvious in one read. **On a free tier, budget for the possibility that
+the diagnosis needs a paid tier**; it is cheaper than a day of guessing.
 
 **The lesson, which generalises past App Service.** On any platform with a
 restart-on-failure loop and a consumption quota, a startup command that

@@ -86,6 +86,7 @@ say "Staging package"
 rsync -a \
   --exclude '__pycache__' \
   --exclude '*.pyc' \
+  --exclude '.DS_Store' \
   --exclude '.streamlit/secrets.toml' \
   "$REPO_ROOT/webapp/" "$STAGING/package/"
 
@@ -142,22 +143,23 @@ print('%s|%s' % (d.get('status'), d.get('complete')))
 done
 
 # --------------------------------------------------------------------------
-# Only NOW is it safe to point the startup command at startup.sh: the file is on
-# disk, so the container cannot exit 127 in a loop and burn the Free plan's daily
-# CPU quota. provision_webapp.sh deliberately leaves a harmless placeholder for
+# Only NOW is it safe to point the startup command at startup.sh: the package is
+# built, so the container cannot exit 127 in a loop and burn the Free plan's
+# daily CPU quota. Note the command is RELATIVE — with Oryx, /home/site/wwwroot
+# holds only the compressed build output, and the app is extracted elsewhere. provision_webapp.sh deliberately leaves a harmless placeholder for
 # exactly this window. Setting it also restarts the app, which is what picks up
 # the newly published code.
 # --------------------------------------------------------------------------
 say "Installing the Streamlit startup command"
 CURRENT_STARTUP="$(az webapp config show -n "$WEBAPP" -g "$RESOURCE_GROUP" \
                    --query appCommandLine -o tsv 2>/dev/null || true)"
-if [[ "$CURRENT_STARTUP" == "bash /home/site/wwwroot/startup.sh" ]]; then
+if [[ "$CURRENT_STARTUP" == "bash startup.sh" ]]; then
   info "already set — restarting to pick up the new code"
   az webapp restart -n "$WEBAPP" -g "$RESOURCE_GROUP" --output none
 else
   az webapp config set -n "$WEBAPP" -g "$RESOURCE_GROUP" \
-    --startup-file "bash /home/site/wwwroot/startup.sh" --output none
-  info "bash /home/site/wwwroot/startup.sh"
+    --startup-file "bash startup.sh" --output none
+  info "bash startup.sh (relative — wwwroot holds only the compressed build output)"
 fi
 
 # --------------------------------------------------------------------------

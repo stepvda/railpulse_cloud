@@ -6,46 +6,87 @@
 # gunicorn. Streamlit is its own long-running server, so the platform needs an
 # explicit startup command:
 #
-#   az webapp config set --startup-file "bash /home/site/wwwroot/startup.sh"
+#   az webapp config set --startup-file "bash startup.sh"      <- RELATIVE
 #
-# TWO THINGS THAT MAKE THE OBVIOUS ONE-LINER FAIL WITH EXIT 127
-# The first version of this was a single `python -m streamlit run app.py`, and the
-# container died with "exit code 127" — shell for *command not found* — after
-# 16 seconds, with App Service then reverting by stopping the whole site (which
-# takes Kudu down too, so the logs become unreachable at exactly the moment you
-# want them).
+# WHY THE STARTUP COMMAND MUST BE RELATIVE — the bug that cost two days
+# An ABSOLUTE startup command (`bash /home/site/wwwroot/startup.sh`) fails with
+# exit 127 — shell for *command not found* — because that file is not there.
+# With an Oryx build, /home/site/wwwroot contains only:
 #
-#   1. The image provides `python3`. It does not necessarily provide `python`,
-#      so `python -m streamlit` is not found.
-#   2. Oryx installs the dependencies into a virtualenv named `antenv`, and a
-#      CUSTOM startup command does not run with it activated. Without it,
-#      streamlit is not importable even once the interpreter is found.
+#     output.tar.zst      the compressed build output (160 MB here)
+#     oryx-manifest.toml
+#     requirements.txt
 #
-# Hence: activate antenv when it exists, then resolve the interpreter rather than
-# assuming its name. The diagnostics printed below cost nothing and go to the
-# container log, so the next failure of this kind is one log read away instead of
-# a bisect.
+# No app.py, no startup.sh, no antenv. The platform extracts that archive to a
+# temp directory at container start, activates the virtualenv inside it, and runs
+# the startup command from THERE. So the command must be relative.
+#
+# The tell was that none of the `startup:` lines below ever appeared in the
+# container log: the script was never reached at all. Two earlier theories —
+# that the image lacks `python` (it has python3), and that a custom command does
+# not inherit Oryx's activated antenv — were plausible, testable, and both wrong.
+# The interpreter probe below is kept anyway: it is cheap insurance and it prints
+# what it found, so a future failure is one log read away instead of a bisect.
 #
 set -euo pipefail
 
-cd /home/site/wwwroot
+# NO `cd /home/site/wwwroot`. With Oryx, wwwroot holds only the COMPRESSED build
+# output (`output.tar.zst`, 160 MB here) plus a manifest — no app.py, no
+# startup.sh, no antenv. The platform extracts that archive to a temp directory
+# at container start, activates the virtualenv inside it, and runs the startup
+# command from there. An absolute startup command like
+#   bash /home/site/wwwroot/startup.sh
+# therefore names a path that never exists, the container exits 127 before a
+# single line of this script runs (which is why no diagnostics appeared in the
+# log), and on the Free plan the restart loop then burns the daily CPU quota.
+# The startup command must be RELATIVE: `bash startup.sh`.
+echo "startup: cwd $(pwd)"
 
 if [[ -f antenv/bin/activate ]]; then
   # shellcheck disable=SC1091
   source antenv/bin/activate
-  echo "startup: activated the antenv virtualenv"
+  echo "startup: activated /home/site/wwwroot/antenv"
 else
-  echo "startup: no antenv/bin/activate — relying on the image's site-packages"
+  echo "startup: no antenv/bin/activate here — will search for an interpreter"
 fi
 
-PYTHON_BIN="$(command -v python3 || command -v python || true)"
+# Pick the FIRST interpreter that can actually import streamlit, rather than the
+# first one that exists. Which of these is correct depends on where Oryx put the
+# virtualenv and on whether the platform's init script activated it before
+# running this command — and getting that wrong yields a container that exits
+# during startup, which on the F1 Free plan burns the daily CPU quota and then
+# takes Kudu down with it, so the log explaining the failure is unreachable.
+# Probing is cheap; a wrong guess costs a day.
+PYTHON_BIN=""
+for candidate in \
+    /home/site/wwwroot/antenv/bin/python \
+    /home/site/wwwroot/antenv/bin/python3 \
+    "$(command -v python3 || true)" \
+    "$(command -v python || true)" \
+    /usr/local/bin/python3 \
+    /usr/bin/python3 \
+    /tmp/*/antenv/bin/python
+do
+  [[ -n "$candidate" && -x "$candidate" ]] || continue
+  if "$candidate" -c "import streamlit" >/dev/null 2>&1; then
+    PYTHON_BIN="$candidate"
+    echo "startup: using $candidate (imports streamlit)"
+    break
+  fi
+  echo "startup: $candidate exists but cannot import streamlit"
+done
+
 if [[ -z "$PYTHON_BIN" ]]; then
-  echo "startup: FATAL — no python3 or python on PATH (PATH=$PATH)" >&2
+  echo "startup: FATAL — no interpreter on this container can import streamlit." >&2
+  echo "startup: PATH=$PATH" >&2
+  echo "startup: wwwroot contents:" >&2
+  ls -la /home/site/wwwroot >&2 || true
+  echo "startup: any antenv?" >&2
+  ls -d /home/site/wwwroot/antenv /tmp/*/antenv 2>/dev/null >&2 || echo "  none found" >&2
   exit 1
 fi
 
-echo "startup: interpreter $PYTHON_BIN ($("$PYTHON_BIN" --version 2>&1))"
-echo "startup: streamlit $("$PYTHON_BIN" -m streamlit version 2>&1 || echo 'NOT IMPORTABLE')"
+echo "startup: $("$PYTHON_BIN" --version 2>&1)"
 echo "startup: binding 0.0.0.0:${PORT:-8000}"
 
 # The platform routes inbound requests to $PORT (8000 on Linux App Service).

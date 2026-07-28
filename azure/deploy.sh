@@ -86,6 +86,7 @@ say "Staging package"
 rsync -a \
   --exclude '__pycache__' \
   --exclude '*.pyc' \
+  --exclude '.DS_Store' \
   --exclude '.pytest_cache' \
   --exclude 'local.settings.json' \
   --exclude '.venv' \

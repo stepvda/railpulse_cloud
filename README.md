@@ -118,6 +118,7 @@ Deployed to `rg-railpulse-cloud` (France Central) and checked end to end by
 
 | stage | result |
 | --- | --- |
+| **dashboard** | live on App Service (F1 Free) — 9 pages over the BI views |
 | schema applied | 6 tables, 8 views, 10 indexes, 15 seeded vehicle types |
 | station catalogue | **714 stations** in one API call |
 | first ingest, 10 hubs | **311 departures**, 10/10 hubs succeeded, 0 failed |
@@ -127,7 +128,12 @@ Deployed to `rg-railpulse-cloud` (France Central) and checked end to end by
 
 A scheduled run then added 85 further departures and revised 219 existing ones,
 so `liveboard_records` grew to 396 rows without a single duplicate — the timer and
-the MERGE working together exactly as designed.
+the MERGE working together exactly as designed. Left to run overnight it reached
+**2,440 departures across 2 days from 220 timer runs** (2,129 inserted, 4,022
+revised). Twenty of those runs failed on upstream iRail HTTP 500s during one
+evening peak; the retry logic recorded them honestly and **no data was lost**,
+because a liveboard shows the next ~55 departures so the next poll recovers them —
+verified by checking hourly coverage across the failure window.
 
 The punctuality leaderboard on that first snapshot already separates the hubs —
 Ghent-Sint-Pieters at 162.9 s mean delay and 85.7% on time, against Leuven and

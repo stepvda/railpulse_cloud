@@ -258,10 +258,25 @@ class TestStartupOrdering:
 
     def test_deploy_installs_the_real_startup_command_after_publishing(self):
         deploy = self.deploy()
-        assert "wwwroot/startup.sh" in deploy
-        # …and does so after the build, not before the package is on disk.
+        assert 'startup-file "bash startup.sh"' in deploy, \
+            "the startup command must be RELATIVE: with Oryx, /home/site/wwwroot " \
+            "holds only the compressed build output, so an absolute path there " \
+            "does not exist and the container exits 127"
+        # …and is set after the build, not before the package exists.
         assert deploy.index("Waiting for the build") < deploy.index(
-            'startup-file "bash /home/site/wwwroot/startup.sh"')
+            'startup-file "bash startup.sh"')
+
+    def test_no_script_assumes_the_app_lives_in_wwwroot(self):
+        """The app is extracted from output.tar.zst to a temp directory; only the
+        archive and its manifest are in wwwroot."""
+        for path in ("azure/deploy_webapp.sh", "webapp/startup.sh"):
+            text = (REPO_ROOT / path).read_text(encoding="utf-8")
+            for line in text.splitlines():
+                stripped = line.strip()
+                if stripped.startswith("#") or not stripped:
+                    continue
+                assert "/home/site/wwwroot/startup.sh" not in stripped, \
+                    f"{path} references an absolute wwwroot path that does not exist"
 
     def test_deploy_reports_quota_exhaustion_explicitly(self):
         assert "QuotaExceeded" in self.deploy()

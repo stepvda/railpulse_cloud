@@ -220,8 +220,16 @@ scoped to the resource group. Two things to look at:
 ## Friday
 
 ```bash
-make pause      # stop the Function App, let the database pause. Data kept.
+make pause      # stop the Function App and the dashboard. Data kept.
 ```
+
+⚠ **Do not try to "pause" the database with `az sql db update`.** Azure SQL
+serverless has **no manual pause** — it pauses itself after the idle delay. A
+no-op `az sql db update` looks harmless and is not: a control-plane update
+requires the database to be online, so it **resumes** one that had already
+auto-paused. `teardown.sh` did exactly that until it was caught, and the observed
+effect was a database going `Paused -> Online` purely because the *pause* command
+was run. The only lever that matters is that nothing queries it.
 
 Stopping the **Function App** is the step that matters: pausing the database
 alone achieves nothing, because the next timer firing resumes it. With the app

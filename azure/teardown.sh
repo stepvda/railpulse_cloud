@@ -59,14 +59,22 @@ case "$MODE" in
       fi
     fi
 
-    info "pausing the serverless database"
-    # Manual pause is only valid from the 'Online' state; a database that has
-    # already auto-paused makes this a harmless no-op.
-    az sql db update --name "$SQL_DATABASE" --server "$SQL_SERVER" \
-      --resource-group "$RESOURCE_GROUP" --output none 2>/dev/null || true
+    # DO NOT issue `az sql db update` here. It looks like a harmless no-op and
+    # is not: a control-plane update requires the database to be online, so it
+    # RESUMES a serverless database that had already auto-paused — this command
+    # used to cause the exact cost it exists to avoid. Observed directly: status
+    # went Paused -> Online purely because `teardown.sh pause` was run.
+    #
+    # There is also nothing to issue. Azure SQL serverless has no manual pause;
+    # it pauses itself after the configured idle delay (60 minutes here). The
+    # only thing that matters is that nothing queries it, which is what stopping
+    # the Function App and the dashboard above achieves.
     STATE="$(az sql db show -n "$SQL_DATABASE" -s "$SQL_SERVER" -g "$RESOURCE_GROUP" \
              --query status -o tsv 2>/dev/null || echo unknown)"
-    info "database status: $STATE (it auto-pauses within an hour of the last query)"
+    info "database status: $STATE"
+    if [[ "$STATE" == "Online" ]]; then
+      info "it will auto-pause ~60 min after the last query; nothing queries it now"
+    fi
 
     cat <<EOF
 

@@ -247,6 +247,49 @@ class TestMigrationFiles:
             f"views not granted to powerbi_reader: {sorted(ungranted)} — add them "
             "to READABLE_OBJECTS or they are invisible to the BI layer")
 
+    def test_the_push_script_only_reads_what_the_bi_login_may_read(self):
+        """scripts/publish_powerbi_dataset.py connects AS powerbi_reader. If it
+        selects from an object that create_bi_reader.py has not granted, it fails
+        at run time with a permission error that looks like a bug in the SQL."""
+        import importlib.util
+
+        def load(name):
+            spec = importlib.util.spec_from_file_location(
+                name, REPO_ROOT / "scripts" / f"{name}.py")
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            return module
+
+        reader = load("create_bi_reader")
+        publisher = load("publish_powerbi_dataset")
+
+        granted = {obj.lower() for obj in reader.READABLE_OBJECTS}
+        sources = {source.lower() for _, source, _ in publisher.TABLES}
+        assert sources, "the publisher declares no source objects"
+        ungranted = sources - granted
+        assert not ungranted, (
+            f"publish_powerbi_dataset reads {sorted(ungranted)}, which "
+            "create_bi_reader does not GRANT to powerbi_reader")
+
+    def test_the_push_dataset_declares_its_relationships(self):
+        """A model whose tables are not related makes every cross-table visual
+        silently wrong rather than empty, which is worse."""
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "publish_powerbi_dataset", REPO_ROOT / "scripts" / "publish_powerbi_dataset.py")
+        publisher = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(publisher)
+
+        table_names = {name for name, _, _ in publisher.TABLES}
+        columns = {name: set(cols) for name, _, cols in publisher.TABLES}
+        assert publisher.RELATIONSHIPS, "no relationships declared"
+        for rel in publisher.RELATIONSHIPS:
+            for side, col in (("fromTable", "fromColumn"), ("toTable", "toColumn")):
+                table = rel[side]
+                assert table in table_names, f"relationship names unknown table {table}"
+                assert rel[col] in columns[table], (
+                    f"relationship uses {table}.{rel[col]}, which is not pushed")
+
     def test_go_inside_a_comment_or_a_word_is_not_a_separator(self):
         script = (
             "SELECT 1;  -- the GO below is the only real separator\n"

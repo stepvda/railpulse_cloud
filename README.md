@@ -27,7 +27,7 @@ that next week's Power BI dashboard has real delays to draw.
 | **Region**             | France Central — nearest region this student subscription's policy allows          |
 | **Dashboard**          | Streamlit on App Service (F1 Free), reading the BI views                            |
 | **Power BI**           | free, web client — least-privilege login, date dimension, DAX measures ready         |
-| **Tests**              | 186, offline, ~1 s — no Azure subscription needed                                    |
+| **Tests**              | 188, offline, ~1 s — no Azure subscription needed                                    |
 
 ---
 
@@ -82,7 +82,7 @@ Azure subscription.
 ```bash
 # 0. Once: the toolchain and an offline test run
 brew install azure-cli
-make venv && make test           # 186 tests, no cloud needed
+make venv && make test           # 188 tests, no cloud needed
 
 # 1. Create everything, with the cost settings baked in
 az login                         # the @becode.education account
@@ -349,6 +349,24 @@ BI Desktop is Windows-only and this project is developed on macOS. The
 `@becode.education` account already holds a `POWER_BI_STANDARD` (Free) licence,
 verified via Graph, so nothing needs buying. Full guide:
 **[`docs/powerbi.md`](docs/powerbi.md)**.
+
+**There is no URL that pre-wires a Power BI web connection to a database** — the
+only pre-filled-connection artifact Power BI has is a `.pbids` file, which opens
+Desktop. So there are two routes, and `make bi-publish` is the one that produces a
+link:
+
+| | **push dataset** (`make bi-publish`) | **Azure SQL connection** (interactive) |
+| --- | --- | --- |
+| gives you | a working URL in ~30 s | a live, self-refreshing model |
+| data | snapshot — re-run to refresh | Import + scheduled refresh |
+| licence | Free ✅ | Free ✅ |
+
+The scripted route is already done and verified: five tables (3,578 departures,
+`dim_date`, `dim_hour`, pipeline health, data quality) with both relationships
+defined, pushed via the Power BI REST API. Confirmed by asking **Power BI's own
+DAX engine** through `executeQueries` rather than trusting the upload — it returns
+Brussels-Central 661 departures at 62.3 s mean delay, Ghent 73.9 s. `make bi-url`
+prints the link.
 
 Three things were added on the Azure side to make it correct rather than merely
 possible:

@@ -27,7 +27,8 @@ RESOURCE_GROUP := $(shell [ -f $(SECRET_FILE) ] && grep -E '^RESOURCE_GROUP=' $(
 .PHONY: help venv test lint provision deploy smoke redeploy \
         migrate seed ingest stats health logs pause teardown \
         local-migrate local-ingest local-verify query clean \
-        provision-web deploy-web web webapp-local webapp-logs web-url
+        provision-web deploy-web web webapp-local webapp-logs web-url \
+        bi-reader bi-publish bi-url
 
 help:  ## Show this help
 	@grep -hE '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -124,6 +125,18 @@ webapp-local:  ## Run the dashboard on this machine against Azure SQL
 	  FUNCTION_APP_URL="https://$$(az webapp show -n $(FUNCTION_APP) -g $(RESOURCE_GROUP) --query defaultHostName -o tsv)" \
 	  FUNCTION_KEY="$$(az functionapp keys list -n $(FUNCTION_APP) -g $(RESOURCE_GROUP) --query functionKeys.default -o tsv)" \
 	  $(PYTHON) -m streamlit run webapp/app.py
+
+# ---------------------------------------------------------------------------
+# Power BI (free licence, web client)
+# ---------------------------------------------------------------------------
+bi-reader:  ## Create/refresh the least-privilege SQL login for Power BI
+	set -a; . ./$(SECRET_FILE); set +a; $(PYTHON) scripts/create_bi_reader.py
+
+bi-publish:  ## Push the warehouse into a Power BI dataset and print its URL
+	$(PYTHON) scripts/publish_powerbi_dataset.py
+
+bi-url:  ## Print the Power BI dataset URL
+	@$(PYTHON) scripts/publish_powerbi_dataset.py --url
 
 # ---------------------------------------------------------------------------
 # Cost control

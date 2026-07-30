@@ -46,6 +46,75 @@ for the graded BI exercise, Streamlit for the thing anyone can just open.
 
 ---
 
+## Two routes, and there is no third
+
+**There is no URL that makes the Power BI web client connect to a database.**
+Power BI's only pre-filled-connection artifact is a `.pbids` file, and it opens
+Power BI *Desktop* — Windows-only. In the Service, creating a data source is an
+interactive flow with no documented deep link and no query-string parameters. No
+script can route around that; what a script *can* do is create the dataset itself
+through the REST API.
+
+| | **A — push dataset (scripted)** | **B — Azure SQL connection (interactive)** |
+|---|---|---|
+| how | `python scripts/publish_powerbi_dataset.py` | click through the web client |
+| you get | a working URL in ~30 s | a live, self-refreshing model |
+| data | **snapshot** — re-run to refresh | Import + scheduled refresh, 1–2×/day |
+| licence | Free ✅ | Free ✅ |
+| gateway | none | none (Azure SQL is a cloud source) |
+| best for | an instant link, a demo | the graded deliverable |
+
+They are complementary. Route A exists because you asked for a URL and Route B
+cannot produce one without a human in the wizard.
+
+### Route A — scripted, gives you a URL immediately
+
+```bash
+python scripts/create_bi_reader.py          # once: the least-privilege login
+python scripts/publish_powerbi_dataset.py   # create + populate the dataset
+python scripts/publish_powerbi_dataset.py --url   # print the URL again later
+```
+
+It reads the BI views **as `powerbi_reader`** (so it also proves that login is
+sufficient for the whole BI surface) and pushes five tables with both
+relationships already defined:
+
+```
+departures        3 578 rows     dim_date   730     dim_hour   24
+pipeline_health      10 rows     data_quality  1
+departures[date_key]    -> dim_date[date_key]
+departures[hour_of_day] -> dim_hour[hour_of_day]
+```
+
+Verified by asking Power BI's own DAX engine, through `executeQueries`, rather
+than by trusting the upload:
+
+```
+EVALUATE TOPN(5, SUMMARIZECOLUMNS(departures[station_name],
+    "Departures", COUNTROWS(departures), "MeanDelay", AVERAGE(departures[delay_seconds])), ...)
+
+  Brussels-Central              661   62.3 s
+  Brussels-North                643   55.8 s
+  Brussels-South/Midi           547   77.6 s
+  Ghent-Sint-Pieters            327   73.9 s
+  Antwerp-Central               315   30.5 s
+```
+
+Then open the printed URL → **Create report**, and paste the measures below.
+
+**Route A's limits, plainly.** A push dataset holds a snapshot: it has no
+connection to Azure SQL, so it never refreshes itself — re-run the script. It also
+cannot be marked as a date table through the API, so `TOTALYTD` and friends need
+that one click in the browser (Table tools → Mark as date table → `date_key`), and
+measures must be added in the browser too.
+
+### Route B — the interactive connection
+
+The rest of this page. Choose this for the graded deliverable: it is a real live
+model with a refresh schedule.
+
+---
+
 ## ⚠ Import, not DirectQuery — this is the whole cost story
 
 When the web client asks for a connectivity mode, choose **Import**.

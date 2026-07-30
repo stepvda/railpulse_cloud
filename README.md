@@ -26,7 +26,8 @@ that next week's Power BI dashboard has real delays to draw.
 | **Cost while running** | ~$54/month, of which 97% is SQL compute · **~$0.28/month paused**                  |
 | **Region**             | France Central — nearest region this student subscription's policy allows          |
 | **Dashboard**          | Streamlit on App Service (F1 Free), reading the BI views                            |
-| **Tests**              | 182, offline, ~1 s — no Azure subscription needed                                   |
+| **Power BI**           | free, web client — least-privilege login, date dimension, DAX measures ready         |
+| **Tests**              | 186, offline, ~1 s — no Azure subscription needed                                    |
 
 ---
 
@@ -45,15 +46,16 @@ flowchart LR
             HTTP["🌐 /api/ingest<br/>/api/health · /api/stats<br/>/api/migrate"]
             CODE["railpulse/<br/>irail → transform → loader"]
         end
-        SQL[("Azure SQL — Serverless<br/>auto-pause 1 h · 2 GB · LRS<br/>6 tables · 8 BI views")]
+        SQL[("Azure SQL — Serverless<br/>auto-pause 1 h · 2 GB · LRS<br/>6 tables · 8 views · 2 BI dims")]
         STORE[("Storage — LRS<br/>runtime state")]
-    end
-
         WEB["🖥️ App Service — F1 Free<br/>Streamlit dashboard, 9 pages"]
     end
 
-    subgraph next["Sprint 3-4"]
-        BI["Power BI"]
+    subgraph bi["Power BI (free licence, web client)"]
+        PBI["Semantic model — IMPORT<br/>refresh 1-2x/day"]
+    end
+
+    subgraph next["Sprint 4"]
         AI["AI assistant<br/>text-to-SQL"]
     end
 
@@ -65,7 +67,7 @@ flowchart LR
     fn -.-> STORE
     SQL -- "8 BI views, read-only" --> WEB
     WEB -. "run ingest (key-protected)" .-> HTTP
-    SQL --> BI
+    SQL -- "powerbi_reader: views only, DENY on tables" --> PBI
     SQL --> AI
 ```
 
@@ -80,7 +82,7 @@ Azure subscription.
 ```bash
 # 0. Once: the toolchain and an offline test run
 brew install azure-cli
-make venv && make test           # 182 tests, no cloud needed
+make venv && make test           # 186 tests, no cloud needed
 
 # 1. Create everything, with the cost settings baked in
 az login                         # the @becode.education account
@@ -340,6 +342,51 @@ denominator. Encoded once, so two dashboards cannot quietly disagree.
 
 ---
 
+## Power BI
+
+A free path to Power BI over the same warehouse, from the **web client** — Power
+BI Desktop is Windows-only and this project is developed on macOS. The
+`@becode.education` account already holds a `POWER_BI_STANDARD` (Free) licence,
+verified via Graph, so nothing needs buying. Full guide:
+**[`docs/powerbi.md`](docs/powerbi.md)**.
+
+Three things were added on the Azure side to make it correct rather than merely
+possible:
+
+**A contiguous date dimension.** `dim_date` (730 days) and `dim_hour` (24 rows) in
+[`sql/05_bi_dimensions.sql`](sql/05_bi_dimensions.sql). Not decoration: DAX time
+intelligence *requires* a gap-free date table, and because the pipeline samples
+only weekday peak windows, gaps are the normal case here. Grouping on the fact's
+own date column would divide "departures per day" by the days that happen to have
+data rather than the days in the period. `dim_hour` exists so a chart shows all 24
+hours — without it the unsampled small hours silently vanish and the network looks
+like it stops at midnight.
+
+**A least-privilege login.** `scripts/create_bi_reader.py` creates
+`powerbi_reader` with SELECT on the **eight views and two dimensions only**, plus
+an explicit `DENY` on every base table. Verified by connecting as it: it reads all
+11 BI objects, and is refused on `liveboard_records`, on every other base table,
+and on every write. This turns the project's central design claim — *the views are
+the BI contract, where every metric is defined* — into a permission Power BI
+cannot route around, even if someone writes a query that tries.
+
+**Import, not DirectQuery.** The one decision that matters for cost. Measured
+spend is €5.19, of which **99.8% is the database**, and the whole model depends on
+that serverless database being asleep most of the time. A DirectQuery report keeps
+it awake for as long as it is open:
+
+| mode | database awake | est. cost |
+| --- | --- | --- |
+| **Import**, refresh 2×/day | ~2 minutes | **~€0** |
+| DirectQuery, used through the day | 8–10 h/day | ~€50–78/month |
+| DirectQuery with auto-refresh | 24 h/day | ~€190/month |
+
+The honest limit: a **Free licence cannot share a report**. It lives in My
+Workspace and only you can open it — screen-share it, start the free 60-day Pro
+trial, or point people at the Streamlit dashboard, which needs no licence at all.
+
+---
+
 ## Cost: the requirement that contradicts itself
 
 The brief asks for a timer **every 15 or 30 minutes** *and* an auto-pause delay of
@@ -417,6 +464,7 @@ None of those are bugs and none should lose a poll. So:
 │   ├── 02_indexes.sql            # 10 indexes, 3 of them filtered; FK support
 │   ├── 03_views.sql              # the 8 BI views
 │   ├── 04_seed_reference.sql     # vehicle_types
+│   ├── 05_bi_dimensions.sql      # dim_date + dim_hour, for Power BI
 │   └── analysis/                 # sprint-1 questions, re-asked on live data
 ├── azure/
 │   ├── provision.sh              # every resource, cost settings baked in, idempotent
@@ -428,13 +476,16 @@ None of those are bugs and none should lose a poll. So:
 │   ├── data.py                   # pymssql, read-only by construction
 │   ├── queries.py                # every statement, all over the BI views
 │   └── startup.sh                # the App Service entry point
-├── scripts/local_cli.py          # run the pipeline / the analysis SQL from a laptop
+├── scripts/
+│   ├── local_cli.py              # run the pipeline / the analysis SQL from a laptop
+│   └── create_bi_reader.py       # least-privilege SQL login for Power BI
 ├── tests/                        # 118 offline tests + 3 recorded API payloads
 └── docs/
     ├── schema.md                 # the schema, at length
     ├── cost_control.md           # the arithmetic
     ├── portal_walkthrough.md     # the manual build, blade by blade
     ├── webapp.md                 # the dashboard: what changed from sprint 1
+    ├── powerbi.md                # free Power BI over the warehouse, web client
     ├── deployment_notes.md       # the 10 things that fought back, and why
     └── api_notes.md              # the API contract and its six quirks
 ```

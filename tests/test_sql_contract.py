@@ -36,6 +36,8 @@ NON_COLUMN_PREFIXES = (
 )
 COLUMN_NAME_RE = re.compile(r"^([a-z][a-z0-9_]*)\s+\S")
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
 BLOCK_COMMENT_RE = re.compile(r"/\*.*?\*/", re.DOTALL)
 LINE_COMMENT_RE = re.compile(r"--[^\n]*")
 
@@ -181,6 +183,69 @@ class TestMigrationFiles:
                                      re.IGNORECASE):
                 assert match.group(2).upper().startswith("WITH"), (
                     f"{path.name}: MERGE into {match.group(1)} lacks HOLDLOCK")
+
+    def test_no_cron_expression_sits_inside_a_block_comment(self):
+        """`*/` closes a T-SQL block comment — including the one in `*/15`.
+
+        An NCRONTAB schedule (`0 */15 6-9,16-19 * * 1-5`) written inside a
+        `/* ... */` comment terminates that comment early, and the remainder of
+        the sentence becomes SQL. The failure is a syntax error pointing at a
+        digit with no obvious cause ("Incorrect syntax near '6'"), and it only
+        appears when the batch actually runs against a server.
+
+        A legitimate comment terminator is followed by whitespace or a newline,
+        never by a digit — so that is the signature to forbid. Cron expressions
+        belong in `--` line comments.
+        """
+        for path in sorted((REPO_ROOT / "sql").rglob("*.sql")):
+            text = path.read_text(encoding="utf-8")
+            for match in re.finditer(r"\*/\d", text):
+                line = text[:match.start()].count("\n") + 1
+                raise AssertionError(
+                    f"{path.relative_to(REPO_ROOT)}:{line} contains '*/' followed "
+                    f"by a digit — this closes the block comment early. Use a "
+                    f"`--` line comment for cron expressions."
+                )
+
+    def test_bi_dimensions_define_what_power_bi_relates_on(self, sql_dir: Path):
+        """A Power BI model needs a contiguous date table and the two join keys;
+        without them time intelligence silently produces wrong answers."""
+        script = strip_comments((sql_dir / "05_bi_dimensions.sql").read_text(encoding="utf-8"))
+        tables = table_columns(script)
+        assert "dim_date" in tables, "no dim_date — DAX time intelligence cannot work"
+        assert "dim_hour" in tables, "no dim_hour — unsampled hours vanish from charts"
+        assert {"date_key", "year_month", "year_month_sort", "is_weekend"} <= tables["dim_date"]
+        assert {"hour_of_day", "hour_label", "peak_window", "window_sort"} <= tables["dim_hour"]
+        # The fact view must expose the relationship keys under unambiguous names.
+        assert "CREATE OR ALTER VIEW dbo.v_bi_departures" in script
+        assert "AS date_key" in script and "AS hour_of_day" in script
+
+    def test_every_object_granted_to_power_bi_actually_exists(self, sql_dir: Path):
+        """scripts/create_bi_reader.py GRANTs SELECT on a fixed list. A name that
+        does not exist makes the grant fail at run time; a view added without
+        being granted is invisible to Power BI. Both are drift worth catching."""
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "create_bi_reader", REPO_ROOT / "scripts" / "create_bi_reader.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        defined: set[str] = set()
+        for path in sorted(sql_dir.glob("*.sql")):
+            script = strip_comments(path.read_text(encoding="utf-8"))
+            defined |= set(re.findall(r"CREATE OR ALTER VIEW dbo\.(\w+)", script))
+            defined |= set(table_columns(script))
+
+        granted = {obj.split(".")[-1] for obj in module.READABLE_OBJECTS}
+        missing = granted - defined
+        assert not missing, f"granted on objects that no .sql file defines: {sorted(missing)}"
+
+        # Every BI view should be readable by Power BI, or it may as well not exist.
+        bi_views = {v for v in defined if v.startswith("v_")}
+        ungranted = bi_views - granted
+        assert not ungranted, (
+            f"views not granted to powerbi_reader: {sorted(ungranted)} — add them "
+            "to READABLE_OBJECTS or they are invisible to the BI layer")
 
     def test_go_inside_a_comment_or_a_word_is_not_a_separator(self):
         script = (

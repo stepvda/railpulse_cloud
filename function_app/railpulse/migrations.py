@@ -43,6 +43,11 @@ MIGRATION_FILES: tuple[str, ...] = (
     "02_indexes.sql",
     "03_views.sql",
     "04_seed_reference.sql",
+    # Date and hour dimensions for the BI layer. Applied with the rest because
+    # they are part of the warehouse contract, not a separate deployment: a
+    # Power BI model without a contiguous date table cannot do time
+    # intelligence at all. See docs/powerbi.md.
+    "05_bi_dimensions.sql",
 )
 
 

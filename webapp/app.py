@@ -846,6 +846,175 @@ def page_pipeline() -> None:
         st.caption("Caches cleared — the pages above now show the new rows.")
 
 
+def page_schedule_vs_reality() -> None:
+    st.title("Schedule vs reality")
+    st.caption(
+        "The static SNCB timetable from sprint 1, joined to what the pipeline "
+        "actually observed. This is the only page that can tell an empty hour "
+        "with no trains apart from an empty hour nobody was watching."
+    )
+    if empty_warehouse_notice():
+        return
+
+    station_id, station_name = station_picker("coverage_station")
+    kpi = run_sql(queries.SCHEDULE_COVERAGE_KPI, (station_id, station_id))
+
+    if not scalar(kpi, "scheduled"):
+        st.info(
+            "**No timetable baseline loaded yet.** The static schedule lives in "
+            "sprint 1's SQLite build; load the comparable slice with\n\n"
+            "`python scripts/load_schedule_baseline.py`",
+            icon="🗓️",
+        )
+        return
+
+    kpis([
+        ("Scheduled", number(scalar(kpi, "scheduled")),
+         "Departures the published timetable says should have left these "
+         "stations on the days observed."),
+        ("Observed", number(scalar(kpi, "observed")),
+         "Of those, how many the pipeline actually saw on a liveboard."),
+        ("Coverage, watched hours",
+         number(scalar(kpi, "coverage_sampled_pct"), "%", 1),
+         "The figure that means something: of the trains scheduled in hours the "
+         "pipeline WAS polling, how many it saw."),
+        ("Coverage, overall", number(scalar(kpi, "coverage_pct"), "%", 1),
+         "Includes hours nobody sampled, so it is low by design. Not a quality "
+         "measure — shown only so it cannot be confused with the figure beside it."),
+        ("Ran unwatched", number(scalar(kpi, "scheduled_unsampled")),
+         "Scheduled departures in hours the pipeline never polled. Previously "
+         "invisible; the timetable is what makes them countable."),
+        ("Days", number(scalar(kpi, "days_covered")), None),
+    ])
+    show_sql(queries.SCHEDULE_COVERAGE_KPI, (station_id, station_id))
+
+    # ----------------------------------------------------------------------
+    st.subheader("Where the blind spot is")
+    st.caption(
+        f"{station_name} — every hour of the day, what the timetable scheduled "
+        "against what was seen. The unwatched hours are the point: the trains "
+        "were there, the pipeline was not."
+    )
+    hourly = run_sql(queries.COVERAGE_BY_HOUR, (station_id, station_id))
+    if hourly.empty:
+        st.caption("No timetable rows for this station.")
+    else:
+        # Long form for a grouped bar chart. A rename and a concat — no
+        # aggregation, no derivation; the numbers are exactly as SQL returned them.
+        scheduled = hourly[["hour_local", "scheduled"]].rename(
+            columns={"scheduled": "departures"}).assign(series="scheduled")
+        observed = hourly[["hour_local", "observed"]].rename(
+            columns={"observed": "departures"}).assign(series="observed")
+        chart_data = pd.concat([scheduled, observed], ignore_index=True)
+
+        st.altair_chart(
+            alt.Chart(chart_data).mark_bar().encode(
+                x=alt.X("hour_local:O", title="Hour (Europe/Brussels)"),
+                y=alt.Y("departures:Q", title="Departures"),
+                color=alt.Color("series:N", title=None,
+                                scale=alt.Scale(domain=["scheduled", "observed"],
+                                                range=["#c9ced6", "#2b6cb0"])),
+                xOffset="series:N",
+                tooltip=["hour_local", "series", "departures"],
+            ).properties(height=340),
+            use_container_width=True,
+        )
+        unwatched = hourly.loc[hourly["hour_was_sampled"] == 0, "scheduled"].sum()
+        st.caption(
+            f"Grey is the timetable, blue is what was observed. **{int(unwatched):,} "
+            "scheduled departures fall in hours with no sampling at all** — the "
+            "flat grey columns. Before the timetable was joined in, those hours "
+            "looked identical to hours with no trains."
+        )
+        st.dataframe(
+            hourly, use_container_width=True, hide_index=True,
+            column_config={
+                "hour_was_sampled": st.column_config.CheckboxColumn("Watched"),
+                "coverage_pct": st.column_config.NumberColumn(
+                    "Coverage", format="%.2f%%"),
+            },
+        )
+    show_sql(queries.COVERAGE_BY_HOUR, (station_id, station_id))
+
+    # ----------------------------------------------------------------------
+    left, right = st.columns([3, 2])
+    with left:
+        st.subheader("Coverage by hub, watched hours only")
+        by_station = run_sql(queries.COVERAGE_BY_STATION)
+        st.dataframe(
+            by_station, use_container_width=True, hide_index=True,
+            column_config={
+                "coverage_pct": st.column_config.ProgressColumn(
+                    "Coverage", format="%.1f%%", min_value=0, max_value=100),
+                "unseen_while_watching": st.column_config.NumberColumn(
+                    "Unseen while watching",
+                    help="Scheduled, in an hour the pipeline was polling, yet "
+                         "never seen. NOT a cancellation count — see below."),
+            },
+        )
+        show_sql(queries.COVERAGE_BY_STATION)
+    with right:
+        st.subheader("How confident is the match?")
+        quality = run_sql(queries.SCHEDULE_MATCH_QUALITY)
+        st.dataframe(
+            quality, use_container_width=True, hide_index=True,
+            column_config={"pct_of_all": st.column_config.NumberColumn(
+                "% of all", format="%.2f%%")},
+        )
+        st.caption(
+            "A timetable row is paired with an observation on station and "
+            "scheduled minute, and confirmed by **train number** where both "
+            "sides publish one. A time-only match is a weaker claim and is "
+            "counted separately rather than averaged in."
+        )
+        show_sql(queries.SCHEDULE_MATCH_QUALITY)
+
+    # ----------------------------------------------------------------------
+    st.subheader("Planned platform vs actual")
+    st.caption(
+        "**Neither dataset can produce this alone.** The timetable knows which "
+        "platform was published; the live feed knows which one the train used."
+    )
+    limit = st.slider("Rows", 5, 200, 25, key="platform_change_rows")
+    changes = run_sql(queries.PLATFORM_PLAN_VS_ACTUAL,
+                      (int(limit), station_id, station_id))
+    if changes.empty:
+        st.caption("No platform differences recorded for this selection.")
+    else:
+        st.dataframe(
+            changes, use_container_width=True, hide_index=True,
+            column_config={
+                "scheduled_departure_local": st.column_config.DatetimeColumn(
+                    "Scheduled (local)", format="YYYY-MM-DD HH:mm"),
+                "planned_platform": st.column_config.TextColumn("Published"),
+                "observed_platform": st.column_config.TextColumn("Actual"),
+                "is_canceled": st.column_config.CheckboxColumn("Cancelled"),
+            },
+        )
+    show_sql(queries.PLATFORM_PLAN_VS_ACTUAL, (int(limit), station_id, station_id))
+
+    # ----------------------------------------------------------------------
+    st.subheader("Scheduled, watched for, never seen")
+    st.warning(
+        "**These are candidates, not cancellations.** A liveboard shows only the "
+        "next ~55 departures, so an hour counted as \"watched\" is often only "
+        "partly covered — a train scheduled late in the hour may simply never "
+        "have been in view. Treat this as a queue to investigate, and read it "
+        "next to the coverage percentage above rather than on its own.",
+        icon="⚠️",
+    )
+    unseen = run_sql(queries.UNSEEN_WHILE_WATCHING,
+                     (int(limit), station_id, station_id))
+    st.dataframe(
+        unseen, use_container_width=True, hide_index=True,
+        column_config={
+            "scheduled_departure_local": st.column_config.DatetimeColumn(
+                "Scheduled (local)", format="YYYY-MM-DD HH:mm"),
+        },
+    )
+    show_sql(queries.UNSEEN_WHILE_WATCHING, (int(limit), station_id, station_id))
+
+
 # ==========================================================================
 # Sidebar and dispatch
 # ==========================================================================
@@ -856,6 +1025,7 @@ PAGES = {
     "Peak hours": page_peak_hours,
     "Platform bottlenecks": page_platforms,
     "Delay evolution": page_delay_evolution,
+    "Schedule vs reality": page_schedule_vs_reality,
     "Services & destinations": page_services,
     "Data quality": page_quality,
     "Pipeline": page_pipeline,

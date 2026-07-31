@@ -27,7 +27,7 @@ that next week's Power BI dashboard has real delays to draw.
 | **Region**             | France Central — nearest region this student subscription's policy allows          |
 | **Dashboard**          | Streamlit on App Service (F1 Free), reading the BI views                            |
 | **Power BI**           | free, web client — least-privilege login, date dimension, DAX measures ready         |
-| **Tests**              | 189, offline, ~1 s — no Azure subscription needed                                    |
+| **Tests**              | 195, offline, ~1 s — no Azure subscription needed                                    |
 
 ---
 
@@ -82,7 +82,7 @@ Azure subscription.
 ```bash
 # 0. Once: the toolchain and an offline test run
 brew install azure-cli
-make venv && make test           # 189 tests, no cloud needed
+make venv && make test           # 195 tests, no cloud needed
 
 # 1. Create everything, with the cost settings baked in
 az login                         # the @becode.education account
@@ -374,6 +374,10 @@ That last row is the clearest example of why combining beats either source: the
 timetable knows the *planned* platform, the live feed knows the *actual* one, and
 neither alone can tell you a train was moved.
 
+All of it is on the dashboard's **Schedule vs reality** page — scheduled against
+observed for all 24 hours, with the unwatched hours marked, so the blind spot is
+visible rather than implied.
+
 Two honest caveats. `silent_cancellation_candidates` counts trains scheduled in a
 sampled hour that never appeared — but a liveboard only shows the next ~55
 departures, so an hour marked "sampled" is often only partly covered, and that
@@ -538,7 +542,7 @@ None of those are bugs and none should lose a poll. So:
 │   ├── smoke_test.sh             # 7 checks incl. the idempotency test
 │   └── teardown.sh               # pause (keeps data) | delete
 ├── webapp/                       # the Streamlit dashboard (App Service)
-│   ├── app.py                    # 9 pages; a renderer, no analysis
+│   ├── app.py                    # 10 pages; a renderer, no analysis
 │   ├── data.py                   # pymssql, read-only by construction
 │   ├── queries.py                # every statement, all over the BI views
 │   └── startup.sh                # the App Service entry point

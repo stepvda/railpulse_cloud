@@ -434,3 +434,115 @@ WHERE latitude IS NOT NULL
   AND longitude IS NOT NULL
   AND (%s = 0 OR is_hub = 1);
 """
+
+
+# ==========================================================================
+# Schedule vs reality — the static timetable joined to the observations
+# ==========================================================================
+# These read sql/06_schedule_baseline.sql's views. They exist to answer the one
+# question the observation-only warehouse cannot: when an hour is empty, was
+# there no train, or was nobody looking?
+
+SCHEDULE_COVERAGE_KPI = """
+SELECT
+    SUM(scheduled)                              AS scheduled,
+    SUM(observed)                               AS observed,
+    COUNT(DISTINCT service_date)                AS days_covered,
+    /* Overall coverage counts hours the pipeline never sampled, so it is always
+       low by design and is NOT a quality measure. Shown next to the sampled-hour
+       figure precisely so the two are not confused. */
+    CONVERT(DECIMAL(5,2), 100.0 * SUM(observed) / NULLIF(SUM(scheduled), 0))
+                                                AS coverage_pct,
+    SUM(CASE WHEN hour_was_sampled = 1 THEN scheduled ELSE 0 END)
+                                                AS scheduled_sampled,
+    SUM(CASE WHEN hour_was_sampled = 1 THEN observed ELSE 0 END)
+                                                AS observed_sampled,
+    CONVERT(DECIMAL(5,2),
+            100.0 * SUM(CASE WHEN hour_was_sampled = 1 THEN observed ELSE 0 END)
+            / NULLIF(SUM(CASE WHEN hour_was_sampled = 1 THEN scheduled ELSE 0 END), 0))
+                                                AS coverage_sampled_pct,
+    SUM(CASE WHEN hour_was_sampled = 0 THEN scheduled ELSE 0 END)
+                                                AS scheduled_unsampled,
+    SUM(silent_cancellation_candidates)         AS silent_candidates
+FROM dbo.v_schedule_coverage
+WHERE (%s = '' OR station_id = %s);
+"""
+
+#: The chart that makes the blind spot visible: scheduled against observed for
+#: every hour, with the hours nobody watched marked as such.
+COVERAGE_BY_HOUR = """
+SELECT
+    scheduled_hour_local                        AS hour_local,
+    MAX(hour_was_sampled)                       AS hour_was_sampled,
+    SUM(scheduled)                              AS scheduled,
+    SUM(observed)                               AS observed,
+    CONVERT(DECIMAL(5,2), 100.0 * SUM(observed) / NULLIF(SUM(scheduled), 0))
+                                                AS coverage_pct
+FROM dbo.v_schedule_coverage
+WHERE (%s = '' OR station_id = %s)
+GROUP BY scheduled_hour_local
+ORDER BY hour_local;
+"""
+
+COVERAGE_BY_STATION = """
+SELECT
+    station_name,
+    SUM(scheduled)                              AS scheduled,
+    SUM(observed)                               AS observed,
+    CONVERT(DECIMAL(5,2), 100.0 * SUM(observed) / NULLIF(SUM(scheduled), 0))
+                                                AS coverage_pct,
+    SUM(silent_cancellation_candidates)         AS unseen_while_watching
+FROM dbo.v_schedule_coverage
+WHERE hour_was_sampled = 1
+GROUP BY station_name
+ORDER BY scheduled DESC;
+"""
+
+#: How the timetable row was paired with an observation. A time-only match is
+#: weaker evidence than one confirmed by train number, and averaging the two
+#: together would hide that.
+SCHEDULE_MATCH_QUALITY = """
+SELECT
+    match_quality,
+    COUNT(*)                                    AS departures,
+    CONVERT(DECIMAL(5,2), 100.0 * COUNT(*) / SUM(COUNT(*)) OVER ())
+                                                AS pct_of_all
+FROM dbo.v_schedule_vs_observed
+GROUP BY match_quality
+ORDER BY departures DESC;
+"""
+
+#: Neither dataset can produce this alone: the timetable knows the PLANNED
+#: platform, the live feed knows the ACTUAL one.
+PLATFORM_PLAN_VS_ACTUAL = """
+SELECT TOP (%s)
+    station_name,
+    scheduled_departure_local,
+    train_number,
+    trip_headsign,
+    planned_platform,
+    observed_platform,
+    delay_seconds,
+    is_canceled
+FROM dbo.v_schedule_vs_observed
+WHERE departed_from_different_platform = 1
+  AND (%s = '' OR station_id = %s)
+ORDER BY scheduled_departure_local DESC;
+"""
+
+#: Scheduled, never seen, in an hour the pipeline WAS watching. Deliberately not
+#: called "cancellations" — see the caption on the page.
+UNSEEN_WHILE_WATCHING = """
+SELECT TOP (%s)
+    station_name,
+    scheduled_departure_local,
+    train_number,
+    route_short_name,
+    trip_headsign,
+    planned_platform
+FROM dbo.v_schedule_vs_observed
+WHERE unobserved = 1
+  AND hour_was_sampled = 1
+  AND (%s = '' OR station_id = %s)
+ORDER BY scheduled_departure_local DESC;
+"""

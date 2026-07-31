@@ -18,7 +18,7 @@ It is not the same app, and this page is about why.
 | client | `sqlite3` | `pymssql` |
 | grain | 2.17 M *scheduled* departures | departure *events*, with observed delays |
 | anti-drift seam | graded `.sql` files loaded verbatim | every query reads a **view** |
-| pages | 9 (overview, Q1–Q5, leaderboard, quality, chat) | 9 (overview, live, leaderboard, peaks, platforms, delay evolution, services, quality, pipeline) |
+| pages | 9 (overview, Q1–Q5, leaderboard, quality, chat) | 10 (overview, live, leaderboard, peaks, platforms, delay evolution, **schedule vs reality**, services, quality, pipeline) |
 
 ---
 
@@ -112,6 +112,28 @@ problem rather than weather.
 to ask. The *Pipeline* page shows per-station freshness, the run log with its
 `trigger_source`, and the insert-versus-revise totals that prove the
 deduplication is working — plus one button that triggers a load.
+
+### And one thing neither sprint could do alone
+
+The **Schedule vs reality** page joins sprint 1's static timetable to these
+observations, which is the only way to answer the question that governs how every
+other page should be read: *when an hour is empty, was there no train, or was
+nobody looking?*
+
+It shows scheduled against observed for all 24 hours, with the unwatched hours
+marked — **14,146 scheduled departures fall in hours the pipeline never polled**,
+and before the timetable was joined in those hours looked identical to hours with
+no trains. Coverage in hours that *were* watched is **74.0%**.
+
+It also surfaces **planned platform vs actual**, which genuinely requires both
+sources: the timetable knows which platform was published, the live feed knows
+which one the train used. Neither alone can tell you a train was moved.
+
+Two honesty rails on that page. The "scheduled, watched for, never seen" table is
+labelled **candidates, not cancellations** — a liveboard shows only the next ~55
+departures, so an hour counted as watched is often only partly covered. And
+`match_quality` separates pairings confirmed by **train number** (95.6%) from
+weaker time-only matches, rather than averaging them together.
 
 ---
 

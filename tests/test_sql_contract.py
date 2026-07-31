@@ -290,6 +290,31 @@ class TestMigrationFiles:
                 assert rel[col] in columns[table], (
                     f"relationship uses {table}.{rel[col]}, which is not pushed")
 
+    def test_the_schedule_join_cannot_fan_out(self, sql_dir: Path):
+        """v_schedule_vs_observed must return exactly one row per SCHEDULED
+        departure, so its counts are a real denominator.
+
+        A plain LEFT JOIN on (station, scheduled minute) does not: two different
+        trains can be scheduled from one station in the same minute — Brussels-
+        Central has a 00:25 to Liege and a 00:25 to Ostende — so two scheduled
+        rows match two observed rows and yield four. The first version of this
+        view did that and reported 24,874 rows for 21,904 scheduled departures,
+        inflating every coverage denominator by 14%.
+
+        OUTER APPLY with TOP 1 is what bounds it to one match.
+        """
+        script = strip_comments(
+            (sql_dir / "06_schedule_baseline.sql").read_text(encoding="utf-8"))
+        view = script[script.index("CREATE OR ALTER VIEW dbo.v_schedule_vs_observed"):]
+        view = view[:view.index(";")]
+        assert "OUTER APPLY" in view.upper(), (
+            "v_schedule_vs_observed must use OUTER APPLY, not a LEFT JOIN, or it "
+            "fans out when two trains share a station-minute")
+        assert re.search(r"SELECT\s+TOP\s+1", view, re.IGNORECASE), (
+            "the OUTER APPLY must be bounded by TOP 1")
+        assert not re.search(r"LEFT\s+JOIN\s+dbo\.liveboard_records", view, re.IGNORECASE), (
+            "joining the fact table directly re-introduces the fan-out")
+
     def test_go_inside_a_comment_or_a_word_is_not_a_separator(self):
         script = (
             "SELECT 1;  -- the GO below is the only real separator\n"

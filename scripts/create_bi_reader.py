@@ -63,6 +63,9 @@ READABLE_OBJECTS = (
     "dbo.v_vehicle_type_performance",
     "dbo.v_ingestion_health",
     "dbo.v_data_quality",
+    # The static-timetable join: coverage, and silent-cancellation candidates.
+    "dbo.v_schedule_vs_observed",
+    "dbo.v_schedule_coverage",
     "dbo.dim_date",
     "dbo.dim_hour",
 )
@@ -189,9 +192,9 @@ def main(argv: list[str] | None = None) -> int:
         # "just make it work" fix someone reaches for — would otherwise silently
         # hand over every base table. An explicit DENY outranks a role grant.
         for table in ("liveboard_records", "stations", "platforms", "vehicles",
-                      "vehicle_types", "ingestion_runs"):
+                      "vehicle_types", "ingestion_runs", "scheduled_departures"):
             cur.execute(f"DENY SELECT ON dbo.{table} TO [{BI_LOGIN}]")
-        print(f"  denied direct SELECT on 6 base tables (DENY outranks any role)")
+        print("  denied direct SELECT on 7 base tables (DENY outranks any role)")
 
         for obj in READABLE_OBJECTS:
             cur.execute(f"GRANT SELECT ON {obj} TO [{BI_LOGIN}]")

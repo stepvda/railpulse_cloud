@@ -27,7 +27,7 @@ that next week's Power BI dashboard has real delays to draw.
 | **Region**             | France Central — nearest region this student subscription's policy allows          |
 | **Dashboard**          | Streamlit on App Service (F1 Free), reading the BI views                            |
 | **Power BI**           | free, web client — least-privilege login, date dimension, DAX measures ready         |
-| **Tests**              | 188, offline, ~1 s — no Azure subscription needed                                    |
+| **Tests**              | 189, offline, ~1 s — no Azure subscription needed                                    |
 
 ---
 
@@ -82,7 +82,7 @@ Azure subscription.
 ```bash
 # 0. Once: the toolchain and an offline test run
 brew install azure-cli
-make venv && make test           # 188 tests, no cloud needed
+make venv && make test           # 189 tests, no cloud needed
 
 # 1. Create everything, with the cost settings baked in
 az login                         # the @becode.education account
@@ -342,6 +342,53 @@ denominator. Encoded once, so two dashboards cannot quietly disagree.
 
 ---
 
+## Static + real-time, combined
+
+Everything above is **observation**: a row exists because the pipeline saw a
+departure. That leaves one question unanswerable, and it is the one that governs
+how every other figure should be read — *when an hour is empty, was there no
+train, or was nobody looking?*
+
+Sprint 1's static GTFS timetable is that missing denominator. `sql/06_schedule_baseline.sql`
+and `scripts/load_schedule_baseline.py` load the slice that can actually be
+compared — the polled hubs, on the dates already observed — and join it to the
+live data.
+
+**The two id systems meet on the UIC code.** Sprint 1 is GTFS
+(`gs:nmbssncb:S8813003`), sprint 2 is iRail (`BE.NMBS.008813003`). Both embed it,
+which is why `stations.uic_code` is a column of its own — 01_schema.sql calls it
+"the join key to any other European rail dataset", and this is that debt being
+collected.
+
+What the combination reveals, on 21,904 scheduled departures across four days:
+
+| | |
+| --- | --- |
+| matched by **time + train number** | 5,490 (95.6% of all matches — a confident join, not a coincidence) |
+| matched on time alone | 252 (reported separately, because it is weaker evidence) |
+| **coverage during sampled hours** | **74.0%** — 5,742 of 7,758 scheduled |
+| **scheduled in hours never sampled** | **14,146** — trains that ran unwatched, now counted instead of invisible |
+| departures that left from a platform other than the published one | **651** |
+
+That last row is the clearest example of why combining beats either source: the
+timetable knows the *planned* platform, the live feed knows the *actual* one, and
+neither alone can tell you a train was moved.
+
+Two honest caveats. `silent_cancellation_candidates` counts trains scheduled in a
+sampled hour that never appeared — but a liveboard only shows the next ~55
+departures, so an hour marked "sampled" is often only partly covered, and that
+number is currently dominated by sampling gaps rather than real cancellations.
+And only the polled hubs are loaded, so this is not a national coverage figure.
+
+**Also worth knowing:** the join exposed a bug in its own first version. A LEFT
+JOIN on (station, scheduled minute) *fans out* — Brussels-Central has a 00:25 to
+Liège and a 00:25 to Ostende — and it returned 24,874 rows for 21,904 scheduled
+departures, inflating every denominator by 14%. Caught because those two numbers
+disagreed. It now uses `OUTER APPLY ... TOP 1`, preferring a train-number match,
+and a test fails if anyone puts the LEFT JOIN back.
+
+---
+
 ## Power BI
 
 A free path to Power BI over the same warehouse, from the **web client** — Power
@@ -483,6 +530,7 @@ None of those are bugs and none should lose a poll. So:
 │   ├── 03_views.sql              # the 8 BI views
 │   ├── 04_seed_reference.sql     # vehicle_types
 │   ├── 05_bi_dimensions.sql      # dim_date + dim_hour, for Power BI
+│   ├── 06_schedule_baseline.sql  # the static timetable, joined to observations
 │   └── analysis/                 # sprint-1 questions, re-asked on live data
 ├── azure/
 │   ├── provision.sh              # every resource, cost settings baked in, idempotent
@@ -496,7 +544,9 @@ None of those are bugs and none should lose a poll. So:
 │   └── startup.sh                # the App Service entry point
 ├── scripts/
 │   ├── local_cli.py              # run the pipeline / the analysis SQL from a laptop
-│   └── create_bi_reader.py       # least-privilege SQL login for Power BI
+│   ├── create_bi_reader.py       # least-privilege SQL login for Power BI
+│   ├── publish_powerbi_dataset.py# push the warehouse into Power BI
+│   └── load_schedule_baseline.py # load sprint 1's timetable as a baseline
 ├── tests/                        # 118 offline tests + 3 recorded API payloads
 └── docs/
     ├── schema.md                 # the schema, at length

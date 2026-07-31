@@ -48,6 +48,11 @@ MIGRATION_FILES: tuple[str, ...] = (
     # Power BI model without a contiguous date table cannot do time
     # intelligence at all. See docs/powerbi.md.
     "05_bi_dimensions.sql",
+    # The static-timetable baseline and its join to the observations. Applied
+    # with the rest so a fresh deployment has the objects; the DATA is loaded
+    # separately by scripts/load_schedule_baseline.py, because it comes from
+    # sprint 1's SQLite build rather than from the API.
+    "06_schedule_baseline.sql",
 )
 
 

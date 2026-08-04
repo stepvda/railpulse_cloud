@@ -26,8 +26,8 @@ that next week's Power BI dashboard has real delays to draw.
 | **Cost while running** | ~$54/month, of which 97% is SQL compute · **~$0.28/month paused**                  |
 | **Region**             | France Central — nearest region this student subscription's policy allows          |
 | **Dashboard**          | Streamlit on App Service (F1 Free), reading the BI views                            |
-| **Power BI**           | free, web client — a **7-page report generated via the API**, mirroring the dashboard |
-| **Tests**              | 214, offline, ~2 s — no Azure subscription needed                                    |
+| **Power BI**           | free, web client — an **8-page report generated via the API**, plus a PBIP project    |
+| **Tests**              | 230, offline, ~2 s — no Azure subscription needed                                    |
 
 ---
 
@@ -82,7 +82,7 @@ Azure subscription.
 ```bash
 # 0. Once: the toolchain and an offline test run
 brew install azure-cli
-make venv && make test           # 214 tests, no cloud needed
+make venv && make test           # 230 tests, no cloud needed
 
 # 1. Create everything, with the cost settings baked in
 az login                         # the @becode.education account
@@ -408,31 +408,32 @@ link:
 
 | | **scripted** (`make bi-report`) | **Azure SQL connection** (interactive) |
 | --- | --- | --- |
-| gives you | a 7-page report, built | a live, self-refreshing model |
+| gives you | an 8-page report, built | a live, self-refreshing model |
 | data | snapshot — re-run to refresh | Import + scheduled refresh |
 | licence | Free ✅ | Free ✅ |
 
 ### The report is generated, not hand-built
 
 Because Power BI Desktop is Windows-only, the alternative to writing a
-click-by-click guide was to build the report through the API — so
-`scripts/build_powerbi_report.py` creates **the same seven pages the Streamlit app
-has**: Overview, Hub leaderboard, Peak hours, Platform bottlenecks, Delay
-evolution, Services & destinations, and Data quality & pipeline. 31 visuals, and
-13 DAX measures defined **on the semantic model rather than per-visual**, so every
-visual shares one definition of "on time" — the same argument the views make in
-SQL and `powerbi_reader` makes in permissions.
+click-by-click guide was to build the report through the API.
+[`scripts/build_powerbi_report.py`](scripts/build_powerbi_report.py) creates the
+semantic model, its **16 DAX measures**, both relationships, the data, a custom
+theme, and **8 pages / 104 visuals** — then verifies the numbers against the
+warehouse.
+
+The measures live **on the model, not in each visual**, so every visual shares one
+definition of "on time" — the same argument the views make in SQL and
+`powerbi_reader` makes in permissions.
 
 Verified by asking **Power BI's own DAX engine** through `executeQueries` and
-comparing every figure with the warehouse, rather than trusting the upload:
+comparing every figure with Azure SQL, rather than trusting the upload:
 
 ```
-metric            Azure SQL     Power BI          metric        Azure SQL   Power BI
-Departures             8753         8753          PlatChg             955        955
-OnTime6              0.9645       0.9645          DaysObs               6          6
-OnTime2              0.9257       0.9257          Growth          21.2156    21.2156
-MeanDelay            51.146       51.146          Deteriorated        173        173
-Cancelled                18           18                        all 9 agree
+measure             Azure SQL       Power BI      measure          Azure SQL   Power BI
+Departures          8907.0000      8907.0000      DelayMinutes        7489.0     7489.0
+OnTimeRate             0.9264         0.9264      Cancelled             18.0       18.0
+OnTime6                0.9648         0.9648      PlatChg              987.0      987.0
+MeanDelayMin           0.8425         0.8425                       all 7 agree
 ```
 
 Getting the report format right took three attempts, all returning the same
@@ -443,7 +444,77 @@ at all. Inside it, `config` and `filters` are JSON-encoded **strings**; passing 
 real object is accepted silently and renders a blank report. That is exactly the
 kind of failure a test has to catch, so
 [`tests/test_powerbi_report.py`](tests/test_powerbi_report.py) pins all of it —
-19 tests, each confirmed to fail when its invariant is deliberately broken.
+29 tests, each confirmed to fail when its invariant is deliberately broken.
+
+---
+
+## 📊 The dashboard: design choices, and why
+
+Eight pages, ordered as a story: **how are we doing → when does it break → what
+breaks → where → who**. Every page carries a navigation bar, so a stakeholder is
+never more than one click from any other view.
+
+| # | Page | The question it answers | Why it looks the way it does |
+|---|---|---|---|
+| 1 | **Executive scorecard** | Is the network on time? | One KPI is deliberately 4× the size of the others. The board asked for On-Time Rate; visual hierarchy should say which number matters. The 6-minute rate sits next to it because a network can look excellent at 6 min and mediocre at 2 — showing both makes the gap legible instead of letting the threshold choice flatter the result. |
+| 2 | **Rush hour matrix** | *When* does it break? | Volume and delay share **one pair of axes**, not two charts. An hour is only a bottleneck when both are high; a busy punctual hour and a quiet late hour need opposite responses, and side-by-side charts hide that. Bars are *departures per day observed*, never a raw count — see below. |
+| 3 | **Train class breakdown** | *What* breaks? | Two rankings side by side, because the brief's question ("which class accounts for the most delayed minutes") is a **sum** and the obvious alternative is a **mean** — and they disagree completely. InterCity tops the total through volume; ICE tops the average at 13.6 min/train. Showing one would send the operator after the wrong class. |
+| 4 | **Platform congestion** | *Where* does it break? | The station slicer is load-bearing, not decoration: "platform 5" pooled across ten hubs averages unrelated tracks and means nothing. Pick a station first — the page says so in the chart title. |
+| 5 | **Hub comparison** | *Who* runs best? | On-time rate and mean delay are charted **separately and adjacently**, because they disagree and the disagreement is the insight: Liège has a high mean but a good rate (few, severe delays); Brussels-Central has a lower mean and the worst rate (many, small ones). Different failure modes, different fixes. |
+| 6 | **Delay evolution** | Do delays grow while you wait? | Only answerable because the pipeline re-polls the same departure — first reading against latest. |
+| 7 | **Services & destinations** | Which routes carry the pain? | |
+| 8 | **Data quality & pipeline** | Should I trust any of this? | **On the report, not in an appendix.** The capture window is partial by design; a reader who does not know that will over-read every other page. |
+
+**The one rule that shapes every hourly figure.** The timer samples weekday peak
+windows harder than the rest of the day, so a raw departure count per hour would
+report *the capture schedule* as the peak — circular. Every hourly chart uses
+`Departures per day` (normalised by days observed) instead, and a test fails the
+build if a raw count ever reaches a Rush hour chart.
+
+**Colour is used for one thing only:** green = on time, red = delay or
+cancellation, amber = attention, navy = neutral volume. No visual uses colour
+decoratively, so a red bar always means the same thing on every page.
+
+---
+
+## 🚦 Top 3 tactical recommendations for the operator
+
+From 8,907 observed departures across 10 hubs. Each is backed by a figure the
+dashboard shows, not an impression.
+
+> ### 1. Move recovery margin from the morning peak to the evening peak
+> The evening peak runs **1.69× worse** than the morning: **69.3 s** mean delay
+> (16:00–19:00) against **41.1 s** (06:00–09:00) — and it does so on **16% fewer
+> trains** (3,280 vs 3,902). 18:00 is the worst hour on the network at **102.2 s**
+> across 721 departures. The timetable pads both peaks alike; the delay is not.
+> **Do:** shift turnaround and buffer minutes out of the morning and into
+> 17:00–19:00 departures.
+>
+> ### 2. Fix the Brussels junction as one system, not three stations
+> Brussels-Central, Midi and North are **46.1% of departures but 60.4% of all
+> delay minutes**. Brussels-Central has the network's **worst on-time rate
+> (89.1%)** despite a *lower* mean delay (60.9 s) than Liège (80.8 s) — the
+> signature of many small delays rather than a few big ones, which is a
+> dwell-time and headway problem, not an incident problem.
+> **Do:** target dwell and headway on the North–Central–Midi spine; per-station
+> initiatives will keep missing it, because the constraint is the link.
+>
+> ### 3. Ring-fence the international platforms at Brussels-Midi
+> International services are **5.1% of departures but 24.1% of all delay minutes**
+> (ICE averages **13.6 min** and Eurostar **5.8 min**, against InterCity's
+> **0.7 min**). At Midi this concentrates geographically: platforms that are 40%+
+> international run **115–273 s** late, while every platform with **no**
+> international traffic runs **23–85 s** — a **10× spread inside one station**.
+> **Do:** isolate international arrivals from domestic platform turns at Midi so
+> imported delay stops propagating into the domestic timetable.
+
+**The honest caveat, which the dashboard itself shows.** These rest on six days of
+weekday-peak sampling. The Data quality page is on the report precisely so nobody
+reads a 3-departure hour as a trend — the low-volume hours (05:00, 11:00, 15:00)
+are sampling edges, not findings, which is why every recommendation above is drawn
+from the 9 hours with 700+ observations. The pipeline keeps collecting, so a rerun
+will move these figures slightly; all of them come from one 8,907-departure
+snapshot.
 
 Three things were added on the Azure side to make it correct rather than merely
 possible:
@@ -576,9 +647,10 @@ None of those are bugs and none should lose a poll. So:
 │   ├── local_cli.py              # run the pipeline / the analysis SQL from a laptop
 │   ├── create_bi_reader.py       # least-privilege SQL login for Power BI
 │   ├── publish_powerbi_dataset.py# push the warehouse into Power BI
-│   ├── build_powerbi_report.py   # generate the 7-page Power BI report
+│   ├── build_powerbi_report.py   # generate the 8-page Power BI report
+│   ├── export_pbip.py            # write powerbi/ as a committable PBIP project
 │   └── load_schedule_baseline.py # load sprint 1's timetable as a baseline
-├── tests/                        # 214 offline tests + 3 recorded API payloads
+├── tests/                        # 230 offline tests + 3 recorded API payloads
 └── docs/
     ├── schema.md                 # the schema, at length
     ├── cost_control.md           # the arithmetic

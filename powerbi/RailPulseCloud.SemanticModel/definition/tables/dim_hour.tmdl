@@ -1,0 +1,37 @@
+table dim_hour
+
+	column hour_of_day
+		dataType: int64
+		sourceColumn: hour_of_day
+		lineageTag: 547bb60c-d242-5cd9-bc47-638ab1fd37e9
+
+	column hour_label
+		dataType: string
+		sourceColumn: hour_label
+		lineageTag: 485c3ffc-67bb-5134-9c33-0d4bd04311a3
+
+	column peak_window
+		dataType: string
+		sourceColumn: peak_window
+		lineageTag: a10755bb-6d13-5982-bf85-21e46c186026
+
+	column window_sort
+		dataType: int64
+		sourceColumn: window_sort
+		lineageTag: caf40315-d90a-52e4-9f90-f4f48c77b5cc
+
+	column is_sampled
+		dataType: boolean
+		sourceColumn: is_sampled
+		lineageTag: 0b93421b-43b8-5908-9636-0df14d0ca2c7
+
+	partition dim_hour = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(ServerName, DatabaseName),
+				    Data = Source{[Schema="dbo",Item="dim_hour"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

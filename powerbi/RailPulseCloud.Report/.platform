@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "RailPulse Cloud \u2014 operations"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "0a39023e-b12c-5682-bed9-09a4badb1714"
+  }
+}

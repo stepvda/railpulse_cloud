@@ -1,0 +1,19 @@
+{
+  "name": "RailPulse",
+  "dataColors": [
+    "#0B6E4F",
+    "#C1272D",
+    "#F2A900",
+    "#1B3A5C",
+    "#7A8B99",
+    "#4A9D7C",
+    "#8C1A1F",
+    "#B98600"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#1B3A5C",
+  "tableAccent": "#0B6E4F",
+  "good": "#0B6E4F",
+  "bad": "#C1272D",
+  "neutral": "#7A8B99"
+}

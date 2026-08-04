@@ -1,0 +1,1047 @@
+{
+  "config": "{\"version\": \"5.43\", \"themeCollection\": {\"customTheme\": {\"name\": \"RailPulse.json\"}}}",
+  "layoutOptimization": 0,
+  "resourcePackages": [
+    {
+      "resourcePackage": {
+        "disabled": false,
+        "name": "RegisteredResources",
+        "type": 1,
+        "items": [
+          {
+            "name": "RailPulse.json",
+            "path": "RailPulse.json",
+            "type": 202
+          }
+        ]
+      }
+    }
+  ],
+  "sections": [
+    {
+      "name": "ReportSectionExec",
+      "displayName": "Executive scorecard",
+      "width": 1280,
+      "height": 720,
+      "displayOption": 1,
+      "config": "{}",
+      "filters": "[]",
+      "visualContainers": [
+        {
+          "x": 20,
+          "y": 20,
+          "z": 0,
+          "width": 400,
+          "height": 170,
+          "config": "{\"name\": \"5ea846ff6d8a4b2ba196e4d7b4d23103\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 20, \"z\": 0, \"width\": 400, \"height\": 170}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.On-Time Rate %\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"On-Time Rate %\"}, \"Name\": \"departures.On-Time Rate %\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'ON-TIME RATE \\u2014 departures under 2 min late'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"labels\": [{\"properties\": {\"color\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#0B6E4F'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 432,
+          "y": 20,
+          "z": 0,
+          "width": 268,
+          "height": 80,
+          "config": "{\"name\": \"eefc05273de842ccac5c892f00b0acd7\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 432, \"y\": 20, \"z\": 0, \"width\": 268, \"height\": 80}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.Departures\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Departures'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"labels\": [{\"properties\": {\"color\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 712,
+          "y": 20,
+          "z": 0,
+          "width": 268,
+          "height": 80,
+          "config": "{\"name\": \"a9d41b1ddfdd43e2bdc831dbd22b9bcb\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 712, \"y\": 20, \"z\": 0, \"width\": 268, \"height\": 80}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.Mean delay min\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Mean delay (min)'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"labels\": [{\"properties\": {\"color\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#F2A900'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 992,
+          "y": 20,
+          "z": 0,
+          "width": 268,
+          "height": 80,
+          "config": "{\"name\": \"a9b40b5a47b54092b248e7f1e3d26396\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 992, \"y\": 20, \"z\": 0, \"width\": 268, \"height\": 80}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.Delay minutes\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Delay minutes\"}, \"Name\": \"departures.Delay minutes\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Total delay (min)'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"labels\": [{\"properties\": {\"color\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#C1272D'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 432,
+          "y": 110,
+          "z": 0,
+          "width": 268,
+          "height": 80,
+          "config": "{\"name\": \"86a494db47a94b0d8f8319b5e72a281c\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 432, \"y\": 110, \"z\": 0, \"width\": 268, \"height\": 80}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.On time 6min %\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"On time 6min %\"}, \"Name\": \"departures.On time 6min %\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'On time at 6 min (UIC)'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"labels\": [{\"properties\": {\"color\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#0B6E4F'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 712,
+          "y": 110,
+          "z": 0,
+          "width": 268,
+          "height": 80,
+          "config": "{\"name\": \"c7f404797a79434d91bc0f1602924a1b\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 712, \"y\": 110, \"z\": 0, \"width\": 268, \"height\": 80}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.Cancellations\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Cancellations\"}, \"Name\": \"departures.Cancellations\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Cancellations'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"labels\": [{\"properties\": {\"color\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#C1272D'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 992,
+          "y": 110,
+          "z": 0,
+          "width": 268,
+          "height": 80,
+          "config": "{\"name\": \"c229e82e99a7436d947c035ebe76e216\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 992, \"y\": 110, \"z\": 0, \"width\": 268, \"height\": 80}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.Platform changes\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Platform changes\"}, \"Name\": \"departures.Platform changes\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Platform changes'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"labels\": [{\"properties\": {\"color\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#F2A900'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 205,
+          "z": 0,
+          "width": 780,
+          "height": 290,
+          "config": "{\"name\": \"857de47ca0494345ac3add313d12f292\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 205, \"z\": 0, \"width\": 780, \"height\": 290}}], \"singleVisual\": {\"visualType\": \"lineClusteredColumnComboChart\", \"projections\": {\"Category\": [{\"queryRef\": \"dim_hour.hour_label\"}], \"Y\": [{\"queryRef\": \"departures.Departures per day\"}], \"Y2\": [{\"queryRef\": \"departures.Mean delay min\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"dim_hour\", \"Type\": 0}, {\"Name\": \"s1\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"hour_label\"}, \"Name\": \"dim_hour.hour_label\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s1\"}}, \"Property\": \"Departures per day\"}, \"Name\": \"departures.Departures per day\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s1\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Volume and delay by hour \\u2014 the evening peak runs worse than the morning'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 812,
+          "y": 205,
+          "z": 0,
+          "width": 448,
+          "height": 290,
+          "config": "{\"name\": \"edf7f3a7f7094a559a0aaf50b092a0cc\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 812, \"y\": 205, \"z\": 0, \"width\": 448, \"height\": 290}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"projections\": {\"Category\": [{\"queryRef\": \"departures.station_name\"}], \"Y\": [{\"queryRef\": \"departures.On-Time Rate %\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"station_name\"}, \"Name\": \"departures.station_name\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"On-Time Rate %\"}, \"Name\": \"departures.On-Time Rate %\"}], \"OrderBy\": [{\"Direction\": 2, \"Expression\": {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"On-Time Rate %\"}}}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'On-time rate by hub'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"dataPoint\": [{\"properties\": {\"fill\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#0B6E4F'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 505,
+          "z": 0,
+          "width": 1240,
+          "height": 150,
+          "config": "{\"name\": \"4474f66783154f60a06397ab0d7a01d1\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 505, \"z\": 0, \"width\": 1240, \"height\": 150}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.station_name\"}, {\"queryRef\": \"departures.Departures\"}, {\"queryRef\": \"departures.On-Time Rate %\"}, {\"queryRef\": \"departures.Mean delay min\"}, {\"queryRef\": \"departures.Delay minutes\"}, {\"queryRef\": \"departures.Cancellations\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"station_name\"}, \"Name\": \"departures.station_name\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"On-Time Rate %\"}, \"Name\": \"departures.On-Time Rate %\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Delay minutes\"}, \"Name\": \"departures.Delay minutes\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Cancellations\"}, \"Name\": \"departures.Cancellations\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Network at a glance'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"30c5c63df5d646e8adbfdc07d6f3d73c\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Rush hour'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionRush'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 176,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"a6a04f8161844269a142f03ccc2f0d29\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 176, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Train class'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionClass'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 332,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"356118cd1eb24c5d847b1db0f5b7c057\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 332, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Platforms'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionPlatforms'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 488,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"dfa639d8b59b4706b71ad4141224fd22\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 488, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Hubs'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionHubs'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 644,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"69cb001845464810a957d3bbc732ba0a\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 644, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Evolution'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionEvolution'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 800,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"d0582c49e9a34c87a9707f1eb3df564c\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 800, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Services'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionServices'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 956,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"ef45fcf578424d999b64366f7aa07b24\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 956, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Data quality'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionQuality'\"}}}}}]}}}",
+          "filters": "[]"
+        }
+      ]
+    },
+    {
+      "name": "ReportSectionRush",
+      "displayName": "Rush hour matrix",
+      "width": 1280,
+      "height": 720,
+      "displayOption": 1,
+      "config": "{}",
+      "filters": "[]",
+      "visualContainers": [
+        {
+          "x": 20,
+          "y": 20,
+          "z": 0,
+          "width": 220,
+          "height": 300,
+          "config": "{\"name\": \"29dbeb56b45d43378c6aef70fae7c117\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 20, \"z\": 0, \"width\": 220, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.day_type\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"day_type\"}, \"Name\": \"departures.day_type\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Day type'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 330,
+          "z": 0,
+          "width": 220,
+          "height": 300,
+          "config": "{\"name\": \"5b1480a90c58467894beabcff4cf7269\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 330, \"z\": 0, \"width\": 220, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.station_name\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"station_name\"}, \"Name\": \"departures.station_name\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Hub'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 252,
+          "y": 20,
+          "z": 0,
+          "width": 1008,
+          "height": 320,
+          "config": "{\"name\": \"908f3bff2acc46cda4c87ab7fdc0bafa\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 252, \"y\": 20, \"z\": 0, \"width\": 1008, \"height\": 320}}], \"singleVisual\": {\"visualType\": \"lineClusteredColumnComboChart\", \"projections\": {\"Category\": [{\"queryRef\": \"dim_hour.hour_label\"}], \"Y\": [{\"queryRef\": \"departures.Departures per day\"}], \"Y2\": [{\"queryRef\": \"departures.Mean delay min\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"dim_hour\", \"Type\": 0}, {\"Name\": \"s1\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"hour_label\"}, \"Name\": \"dim_hour.hour_label\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s1\"}}, \"Property\": \"Departures per day\"}, \"Name\": \"departures.Departures per day\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s1\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'THE RUSH HOUR MATRIX \\u2014 bars: departures per day observed \\u00b7 line: mean delay (min)'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 252,
+          "y": 350,
+          "z": 0,
+          "width": 500,
+          "height": 280,
+          "config": "{\"name\": \"3f0c47dcfe6b4bc0886dc24c5467057a\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 252, \"y\": 350, \"z\": 0, \"width\": 500, \"height\": 280}}], \"singleVisual\": {\"visualType\": \"lineChart\", \"projections\": {\"Category\": [{\"queryRef\": \"dim_hour.hour_label\"}], \"Y\": [{\"queryRef\": \"departures.On-Time Rate %\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"dim_hour\", \"Type\": 0}, {\"Name\": \"s1\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"hour_label\"}, \"Name\": \"dim_hour.hour_label\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s1\"}}, \"Property\": \"On-Time Rate %\"}, \"Name\": \"departures.On-Time Rate %\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'On-time rate through the day'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"dataPoint\": [{\"properties\": {\"fill\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#0B6E4F'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 764,
+          "y": 350,
+          "z": 0,
+          "width": 496,
+          "height": 280,
+          "config": "{\"name\": \"bb949cce3b944c5b94280412ad6dff51\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 764, \"y\": 350, \"z\": 0, \"width\": 496, \"height\": 280}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"projections\": {\"Values\": [{\"queryRef\": \"dim_hour.hour_label\"}, {\"queryRef\": \"dim_hour.peak_window\"}, {\"queryRef\": \"departures.Departures\"}, {\"queryRef\": \"departures.Mean delay min\"}, {\"queryRef\": \"departures.On-Time Rate %\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"dim_hour\", \"Type\": 0}, {\"Name\": \"s1\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"hour_label\"}, \"Name\": \"dim_hour.hour_label\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"peak_window\"}, \"Name\": \"dim_hour.peak_window\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s1\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s1\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s1\"}}, \"Property\": \"On-Time Rate %\"}, \"Name\": \"departures.On-Time Rate %\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'By hour \\u2014 read Departures before trusting a rate'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"00a1d535811345eaa0c17ea24660b240\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Scorecard'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionExec'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 176,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"74142cbe6d4d421ea6edcfb9d17ac98a\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 176, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Train class'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionClass'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 332,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"f70464dd04214e2f94eba34104ba7670\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 332, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Platforms'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionPlatforms'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 488,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"63d25d3617f14117b97d043f8e29d47d\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 488, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Hubs'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionHubs'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 644,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"77580a7b658b4e228321f1e6edd0fd3b\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 644, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Evolution'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionEvolution'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 800,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"24ced195b4e047b38d17093b56c73f29\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 800, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Services'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionServices'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 956,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"097313afc07344c893cb019bd5a98617\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 956, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Data quality'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionQuality'\"}}}}}]}}}",
+          "filters": "[]"
+        }
+      ]
+    },
+    {
+      "name": "ReportSectionClass",
+      "displayName": "Train class breakdown",
+      "width": 1280,
+      "height": 720,
+      "displayOption": 1,
+      "config": "{}",
+      "filters": "[]",
+      "visualContainers": [
+        {
+          "x": 20,
+          "y": 20,
+          "z": 0,
+          "width": 220,
+          "height": 300,
+          "config": "{\"name\": \"22fb4b8cd04947389b23576e406767f9\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 20, \"z\": 0, \"width\": 220, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.vehicle_type\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"vehicle_type\"}, \"Name\": \"departures.vehicle_type\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Train class'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 330,
+          "z": 0,
+          "width": 220,
+          "height": 300,
+          "config": "{\"name\": \"6692b1f3e05640a88b7daa22d4ae1bde\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 330, \"z\": 0, \"width\": 220, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.day_type\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"day_type\"}, \"Name\": \"departures.day_type\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Day type'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 252,
+          "y": 20,
+          "z": 0,
+          "width": 500,
+          "height": 300,
+          "config": "{\"name\": \"126c4fda675e48578a56d91297eec177\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 252, \"y\": 20, \"z\": 0, \"width\": 500, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"projections\": {\"Category\": [{\"queryRef\": \"departures.vehicle_type\"}], \"Y\": [{\"queryRef\": \"departures.Delay minutes\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"vehicle_type\"}, \"Name\": \"departures.vehicle_type\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Delay minutes\"}, \"Name\": \"departures.Delay minutes\"}], \"OrderBy\": [{\"Direction\": 2, \"Expression\": {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Delay minutes\"}}}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'TOTAL delayed minutes by class \\u2014 the brief's question'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"dataPoint\": [{\"properties\": {\"fill\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#C1272D'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 764,
+          "y": 20,
+          "z": 0,
+          "width": 496,
+          "height": 300,
+          "config": "{\"name\": \"adb401399f4443f2b667dcc8c47efe01\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 764, \"y\": 20, \"z\": 0, \"width\": 496, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"projections\": {\"Category\": [{\"queryRef\": \"departures.vehicle_type\"}], \"Y\": [{\"queryRef\": \"departures.Mean delay min\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"vehicle_type\"}, \"Name\": \"departures.vehicle_type\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}], \"OrderBy\": [{\"Direction\": 2, \"Expression\": {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}}}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'MEAN delay per train \\u2014 a different ranking, equally true'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"dataPoint\": [{\"properties\": {\"fill\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#F2A900'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 252,
+          "y": 330,
+          "z": 0,
+          "width": 500,
+          "height": 300,
+          "config": "{\"name\": \"0a3b0500200e4d37987c6a6e4001f629\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 252, \"y\": 330, \"z\": 0, \"width\": 500, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"lineClusteredColumnComboChart\", \"projections\": {\"Category\": [{\"queryRef\": \"departures.vehicle_type\"}], \"Y\": [{\"queryRef\": \"departures.Departures\"}], \"Y2\": [{\"queryRef\": \"departures.On-Time Rate %\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"vehicle_type\"}, \"Name\": \"departures.vehicle_type\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"On-Time Rate %\"}, \"Name\": \"departures.On-Time Rate %\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Volume against on-time rate'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 764,
+          "y": 330,
+          "z": 0,
+          "width": 496,
+          "height": 300,
+          "config": "{\"name\": \"8882aac3bad045acb77d1f232066daa5\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 764, \"y\": 330, \"z\": 0, \"width\": 496, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.vehicle_type\"}, {\"queryRef\": \"departures.Departures\"}, {\"queryRef\": \"departures.Delay minutes\"}, {\"queryRef\": \"departures.Share of delay %\"}, {\"queryRef\": \"departures.Mean delay min\"}, {\"queryRef\": \"departures.On-Time Rate %\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"vehicle_type\"}, \"Name\": \"departures.vehicle_type\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Delay minutes\"}, \"Name\": \"departures.Delay minutes\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Share of delay %\"}, \"Name\": \"departures.Share of delay %\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"On-Time Rate %\"}, \"Name\": \"departures.On-Time Rate %\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'By class, with each one's share of all delay'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"306039c9f0774ce49748331253606f8f\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Scorecard'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionExec'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 176,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"3fb77f91b8b540cb95b43f4cb49a8fbc\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 176, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Rush hour'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionRush'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 332,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"16b3b3aabf1c4767af52fed707301c0b\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 332, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Platforms'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionPlatforms'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 488,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"21e9d419be6a4dab8e2709473481b6a2\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 488, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Hubs'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionHubs'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 644,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"99757b2cab7344ccaefaaeff2b714844\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 644, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Evolution'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionEvolution'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 800,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"e09986aed4534d6690d7d39530a16737\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 800, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Services'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionServices'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 956,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"08fc5b76c7294cbd9ba4802c588f1458\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 956, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Data quality'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionQuality'\"}}}}}]}}}",
+          "filters": "[]"
+        }
+      ]
+    },
+    {
+      "name": "ReportSectionPlatforms",
+      "displayName": "Platform congestion",
+      "width": 1280,
+      "height": 720,
+      "displayOption": 1,
+      "config": "{}",
+      "filters": "[]",
+      "visualContainers": [
+        {
+          "x": 20,
+          "y": 20,
+          "z": 0,
+          "width": 220,
+          "height": 300,
+          "config": "{\"name\": \"cf5764e05ffa49d2bb0d6d140f30bf8c\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 20, \"z\": 0, \"width\": 220, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.station_name\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"station_name\"}, \"Name\": \"departures.station_name\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Station \\u2014 pick one'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 330,
+          "z": 0,
+          "width": 220,
+          "height": 300,
+          "config": "{\"name\": \"1a1ffd6cefe54bc6ab608aac566287de\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 330, \"z\": 0, \"width\": 220, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.vehicle_type\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"vehicle_type\"}, \"Name\": \"departures.vehicle_type\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Train class'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 252,
+          "y": 20,
+          "z": 0,
+          "width": 500,
+          "height": 300,
+          "config": "{\"name\": \"89365b3bb1df48078be4172ae4463ee7\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 252, \"y\": 20, \"z\": 0, \"width\": 500, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"projections\": {\"Category\": [{\"queryRef\": \"departures.platform_label\"}], \"Y\": [{\"queryRef\": \"departures.Mean delay min\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"platform_label\"}, \"Name\": \"departures.platform_label\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}], \"OrderBy\": [{\"Direction\": 2, \"Expression\": {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}}}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Mean delay by platform \\u2014 slice to one station first'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"dataPoint\": [{\"properties\": {\"fill\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#C1272D'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 764,
+          "y": 20,
+          "z": 0,
+          "width": 496,
+          "height": 300,
+          "config": "{\"name\": \"fb42339dd565468586efd7a9449c9fa0\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 764, \"y\": 20, \"z\": 0, \"width\": 496, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"clusteredColumnChart\", \"projections\": {\"Category\": [{\"queryRef\": \"departures.platform_label\"}], \"Y\": [{\"queryRef\": \"departures.Departures\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"platform_label\"}, \"Name\": \"departures.platform_label\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}], \"OrderBy\": [{\"Direction\": 2, \"Expression\": {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}}}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Traffic by platform'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"dataPoint\": [{\"properties\": {\"fill\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 252,
+          "y": 330,
+          "z": 0,
+          "width": 500,
+          "height": 300,
+          "config": "{\"name\": \"45bf5ff57f684073b196cdfa68a35ea7\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 252, \"y\": 330, \"z\": 0, \"width\": 500, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"lineClusteredColumnComboChart\", \"projections\": {\"Category\": [{\"queryRef\": \"departures.platform_label\"}], \"Y\": [{\"queryRef\": \"departures.Departures\"}], \"Y2\": [{\"queryRef\": \"departures.Mean delay min\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"platform_label\"}, \"Name\": \"departures.platform_label\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Load against delay \\u2014 congestion is both at once'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 764,
+          "y": 330,
+          "z": 0,
+          "width": 496,
+          "height": 300,
+          "config": "{\"name\": \"41a6dab140454b24b668fe7cf735bc5b\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 764, \"y\": 330, \"z\": 0, \"width\": 496, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.station_name\"}, {\"queryRef\": \"departures.platform_label\"}, {\"queryRef\": \"departures.Departures\"}, {\"queryRef\": \"departures.Mean delay min\"}, {\"queryRef\": \"departures.Delay minutes\"}, {\"queryRef\": \"departures.On-Time Rate %\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"station_name\"}, \"Name\": \"departures.station_name\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"platform_label\"}, \"Name\": \"departures.platform_label\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Delay minutes\"}, \"Name\": \"departures.Delay minutes\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"On-Time Rate %\"}, \"Name\": \"departures.On-Time Rate %\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"''unknown' means unallocated at poll time, not missing data'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"16dd0f20072b41e280deda8a1bdb5e10\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Scorecard'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionExec'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 176,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"2bae271dd2ba4a20810820b5e85804bc\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 176, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Rush hour'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionRush'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 332,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"1ad161efb8044d63862e319580715233\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 332, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Train class'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionClass'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 488,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"3c9945da668e47a98339550cdf1b574f\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 488, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Hubs'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionHubs'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 644,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"07c61b93249f4f668b1428ac68ee44d3\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 644, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Evolution'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionEvolution'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 800,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"9619cb0b45c84529892e6dd0e66cc6ee\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 800, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Services'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionServices'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 956,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"39755225a07b4538ad2296b6fcefd83d\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 956, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Data quality'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionQuality'\"}}}}}]}}}",
+          "filters": "[]"
+        }
+      ]
+    },
+    {
+      "name": "ReportSectionHubs",
+      "displayName": "Hub comparison",
+      "width": 1280,
+      "height": 720,
+      "displayOption": 1,
+      "config": "{}",
+      "filters": "[]",
+      "visualContainers": [
+        {
+          "x": 20,
+          "y": 20,
+          "z": 0,
+          "width": 220,
+          "height": 240,
+          "config": "{\"name\": \"db9ef284f9d248b99a132bfbbe60f326\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 20, \"z\": 0, \"width\": 220, \"height\": 240}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.station_name\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"station_name\"}, \"Name\": \"departures.station_name\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Hubs to compare'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 270,
+          "z": 0,
+          "width": 220,
+          "height": 180,
+          "config": "{\"name\": \"76af0b4778274a00953ebd8ca327ad3d\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 270, \"z\": 0, \"width\": 220, \"height\": 180}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.day_type\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"day_type\"}, \"Name\": \"departures.day_type\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Day type'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 460,
+          "z": 0,
+          "width": 220,
+          "height": 170,
+          "config": "{\"name\": \"24463e80f1154da49d7be48d8e0973dc\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 460, \"z\": 0, \"width\": 220, \"height\": 170}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.peak_window\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"peak_window\"}, \"Name\": \"departures.peak_window\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Peak window'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 252,
+          "y": 20,
+          "z": 0,
+          "width": 500,
+          "height": 300,
+          "config": "{\"name\": \"469fd2d330e041128cd08b4a2ea6c9ea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 252, \"y\": 20, \"z\": 0, \"width\": 500, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"projections\": {\"Category\": [{\"queryRef\": \"departures.station_name\"}], \"Y\": [{\"queryRef\": \"departures.On-Time Rate %\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"station_name\"}, \"Name\": \"departures.station_name\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"On-Time Rate %\"}, \"Name\": \"departures.On-Time Rate %\"}], \"OrderBy\": [{\"Direction\": 2, \"Expression\": {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"On-Time Rate %\"}}}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'On-time rate \\u2014 many small delays show up here'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"dataPoint\": [{\"properties\": {\"fill\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#0B6E4F'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 764,
+          "y": 20,
+          "z": 0,
+          "width": 496,
+          "height": 300,
+          "config": "{\"name\": \"37a304c5b1734a9fb8a3b01ac209d4b8\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 764, \"y\": 20, \"z\": 0, \"width\": 496, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"projections\": {\"Category\": [{\"queryRef\": \"departures.station_name\"}], \"Y\": [{\"queryRef\": \"departures.Mean delay min\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"station_name\"}, \"Name\": \"departures.station_name\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}], \"OrderBy\": [{\"Direction\": 2, \"Expression\": {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}}}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Mean delay \\u2014 a few severe delays show up here'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"dataPoint\": [{\"properties\": {\"fill\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#C1272D'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 252,
+          "y": 330,
+          "z": 0,
+          "width": 500,
+          "height": 300,
+          "config": "{\"name\": \"19e68154c53f454490abf370b2373e1b\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 252, \"y\": 330, \"z\": 0, \"width\": 500, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"scatterChart\", \"projections\": {\"Category\": [{\"queryRef\": \"departures.station_name\"}], \"X\": [{\"queryRef\": \"departures.Departures\"}], \"Y\": [{\"queryRef\": \"departures.Mean delay min\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"station_name\"}, \"Name\": \"departures.station_name\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Volume against delay'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 764,
+          "y": 330,
+          "z": 0,
+          "width": 496,
+          "height": 300,
+          "config": "{\"name\": \"8e9277465c5a46ceaf82217ebadca957\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 764, \"y\": 330, \"z\": 0, \"width\": 496, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.station_name\"}, {\"queryRef\": \"departures.Departures\"}, {\"queryRef\": \"departures.On-Time Rate %\"}, {\"queryRef\": \"departures.Mean delay min\"}, {\"queryRef\": \"departures.Delay minutes\"}, {\"queryRef\": \"departures.Share of delay %\"}, {\"queryRef\": \"departures.Reliability score\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"station_name\"}, \"Name\": \"departures.station_name\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"On-Time Rate %\"}, \"Name\": \"departures.On-Time Rate %\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Delay minutes\"}, \"Name\": \"departures.Delay minutes\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Share of delay %\"}, \"Name\": \"departures.Share of delay %\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Reliability score\"}, \"Name\": \"departures.Reliability score\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Hub leaderboard'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"7caa15e2fecf4cea8c14c32c92de4e13\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Scorecard'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionExec'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 176,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"75c1baa225574e4bae2e2c86df288e3d\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 176, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Rush hour'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionRush'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 332,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"da6b21ed127f444a86a8fcadd9511499\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 332, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Train class'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionClass'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 488,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"03dbabc44cf44b0b9f0e297e501c14ca\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 488, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Platforms'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionPlatforms'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 644,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"c49450bfe34b4cdc9b823435cbf4ed25\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 644, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Evolution'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionEvolution'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 800,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"e722da6709fe478dbe15095da9286129\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 800, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Services'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionServices'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 956,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"a9153f07d14e4b4193478456fb35f36d\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 956, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Data quality'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionQuality'\"}}}}}]}}}",
+          "filters": "[]"
+        }
+      ]
+    },
+    {
+      "name": "ReportSectionEvolution",
+      "displayName": "Delay evolution",
+      "width": 1280,
+      "height": 720,
+      "displayOption": 1,
+      "config": "{}",
+      "filters": "[]",
+      "visualContainers": [
+        {
+          "x": 20,
+          "y": 20,
+          "z": 0,
+          "width": 300,
+          "height": 105,
+          "config": "{\"name\": \"474d0b1c0a3c455eacc2a9d6a6c5f4d0\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 20, \"z\": 0, \"width\": 300, \"height\": 105}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.Delay growth s\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Delay growth s\"}, \"Name\": \"departures.Delay growth s\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Mean delay growth (s)'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"labels\": [{\"properties\": {\"color\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#C1272D'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 330,
+          "y": 20,
+          "z": 0,
+          "width": 300,
+          "height": 105,
+          "config": "{\"name\": \"9528081617c7476894b4b8e2e9cfb82c\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 330, \"y\": 20, \"z\": 0, \"width\": 300, \"height\": 105}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.Deteriorated 5min+\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Deteriorated 5min+\"}, \"Name\": \"departures.Deteriorated 5min+\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Deteriorated by 5+ min'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"labels\": [{\"properties\": {\"color\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#C1272D'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 660,
+          "y": 20,
+          "z": 0,
+          "width": 600,
+          "height": 300,
+          "config": "{\"name\": \"0e662bc5c5e745309b34f293d48583ce\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 660, \"y\": 20, \"z\": 0, \"width\": 600, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"donutChart\", \"projections\": {\"Category\": [{\"queryRef\": \"departures.delay_bucket\"}], \"Y\": [{\"queryRef\": \"departures.Departures\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"delay_bucket\"}, \"Name\": \"departures.delay_bucket\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Where delays end up'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 340,
+          "z": 0,
+          "width": 1240,
+          "height": 310,
+          "config": "{\"name\": \"f3dd46c4dca64255b6a4a49912808016\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 340, \"z\": 0, \"width\": 1240, \"height\": 310}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.station_name\"}, {\"queryRef\": \"departures.vehicle_name\"}, {\"queryRef\": \"departures.destination_name\"}, {\"queryRef\": \"departures.scheduled_departure_local\"}, {\"queryRef\": \"departures.delay_first_seen_s\"}, {\"queryRef\": \"departures.delay_seconds\"}, {\"queryRef\": \"departures.delay_growth_s\"}, {\"queryRef\": \"departures.observation_count\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"station_name\"}, \"Name\": \"departures.station_name\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"vehicle_name\"}, \"Name\": \"departures.vehicle_name\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"destination_name\"}, \"Name\": \"departures.destination_name\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"scheduled_departure_local\"}, \"Name\": \"departures.scheduled_departure_local\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"delay_first_seen_s\"}, \"Name\": \"departures.delay_first_seen_s\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"delay_seconds\"}, \"Name\": \"departures.delay_seconds\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"delay_growth_s\"}, \"Name\": \"departures.delay_growth_s\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"observation_count\"}, \"Name\": \"departures.observation_count\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'First reading against latest \\u2014 visible only because each train is re-polled'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"0606dc7341bb4098a3200af9ce229695\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Scorecard'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionExec'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 176,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"4d0a6fe32ba84c9fb618b2bef8c44271\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 176, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Rush hour'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionRush'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 332,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"ef5659e4be8441ae988c38dbb331a6b3\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 332, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Train class'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionClass'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 488,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"90bf1e2eed3044219909a4f8c484f2fe\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 488, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Platforms'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionPlatforms'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 644,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"06b3694e6a984d0dae59fe10a15b9fe4\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 644, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Hubs'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionHubs'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 800,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"1b1dbbef33944c44b98a1178d034df81\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 800, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Services'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionServices'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 956,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"b76776d37dc5435d818e985837811faa\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 956, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Data quality'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionQuality'\"}}}}}]}}}",
+          "filters": "[]"
+        }
+      ]
+    },
+    {
+      "name": "ReportSectionServices",
+      "displayName": "Services & destinations",
+      "width": 1280,
+      "height": 720,
+      "displayOption": 1,
+      "config": "{}",
+      "filters": "[]",
+      "visualContainers": [
+        {
+          "x": 20,
+          "y": 20,
+          "z": 0,
+          "width": 220,
+          "height": 300,
+          "config": "{\"name\": \"eca40deeeecf4617945859e8f41ebeeb\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 20, \"z\": 0, \"width\": 220, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.destination_name\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"destination_name\"}, \"Name\": \"departures.destination_name\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Destination'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 252,
+          "y": 20,
+          "z": 0,
+          "width": 1008,
+          "height": 300,
+          "config": "{\"name\": \"ec857550ba464d7aa8477c88a9ff3b46\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 252, \"y\": 20, \"z\": 0, \"width\": 1008, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"projections\": {\"Category\": [{\"queryRef\": \"departures.destination_name\"}], \"Y\": [{\"queryRef\": \"departures.Departures\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"destination_name\"}, \"Name\": \"departures.destination_name\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}], \"OrderBy\": [{\"Direction\": 2, \"Expression\": {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}}}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Busiest destinations'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"dataPoint\": [{\"properties\": {\"fill\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 330,
+          "z": 0,
+          "width": 620,
+          "height": 300,
+          "config": "{\"name\": \"dc8ff0cd4fa34f5596528bec297c351a\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 330, \"z\": 0, \"width\": 620, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"scatterChart\", \"projections\": {\"Category\": [{\"queryRef\": \"departures.destination_name\"}], \"X\": [{\"queryRef\": \"departures.Departures\"}], \"Y\": [{\"queryRef\": \"departures.Mean delay min\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"destination_name\"}, \"Name\": \"departures.destination_name\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Destination: volume against delay'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 660,
+          "y": 330,
+          "z": 0,
+          "width": 600,
+          "height": 300,
+          "config": "{\"name\": \"bc19956edf4e44b2ab2608ea28469519\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 660, \"y\": 330, \"z\": 0, \"width\": 600, \"height\": 300}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"projections\": {\"Values\": [{\"queryRef\": \"departures.destination_name\"}, {\"queryRef\": \"departures.Departures\"}, {\"queryRef\": \"departures.Mean delay min\"}, {\"queryRef\": \"departures.On-Time Rate %\"}, {\"queryRef\": \"departures.Cancelled %\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"departures\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"destination_name\"}, \"Name\": \"departures.destination_name\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Departures\"}, \"Name\": \"departures.Departures\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Mean delay min\"}, \"Name\": \"departures.Mean delay min\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"On-Time Rate %\"}, \"Name\": \"departures.On-Time Rate %\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"Cancelled %\"}, \"Name\": \"departures.Cancelled %\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'By destination'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"65c2293c731347c9803e8fddc0ad281e\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Scorecard'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionExec'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 176,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"ff9a1c6481544dd7bc697ab26c312e21\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 176, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Rush hour'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionRush'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 332,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"36a6353e35124286a037caab3ecd594b\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 332, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Train class'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionClass'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 488,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"46208dfa45d74abca2de078c71b744d5\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 488, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Platforms'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionPlatforms'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 644,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"6f83b45d2fb246c8aef19039e5793a1a\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 644, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Hubs'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionHubs'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 800,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"4e9b67cebac241daa2571c7febe9954b\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 800, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Evolution'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionEvolution'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 956,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"cbf5752164e5476bb698bae76f01fc2c\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 956, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Data quality'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionQuality'\"}}}}}]}}}",
+          "filters": "[]"
+        }
+      ]
+    },
+    {
+      "name": "ReportSectionQuality",
+      "displayName": "Data quality & pipeline",
+      "width": 1280,
+      "height": 720,
+      "displayOption": 1,
+      "config": "{}",
+      "filters": "[]",
+      "visualContainers": [
+        {
+          "x": 20,
+          "y": 20,
+          "z": 0,
+          "width": 300,
+          "height": 105,
+          "config": "{\"name\": \"be52dedca6bf4575a0b7730101a8444b\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 20, \"z\": 0, \"width\": 300, \"height\": 105}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"Agg0(data_quality.row_count)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"data_quality\", \"Type\": 0}], \"Select\": [{\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"row_count\"}}, \"Function\": 0}, \"Name\": \"Agg0(data_quality.row_count)\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Rows'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"labels\": [{\"properties\": {\"color\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 330,
+          "y": 20,
+          "z": 0,
+          "width": 300,
+          "height": 105,
+          "config": "{\"name\": \"e152dac48bd2477687b9f971da9b73d8\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 330, \"y\": 20, \"z\": 0, \"width\": 300, \"height\": 105}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"Agg1(data_quality.pct_platform_unknown)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"data_quality\", \"Type\": 0}], \"Select\": [{\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"pct_platform_unknown\"}}, \"Function\": 1}, \"Name\": \"Agg1(data_quality.pct_platform_unknown)\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Platform unknown %'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"labels\": [{\"properties\": {\"color\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#F2A900'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 640,
+          "y": 20,
+          "z": 0,
+          "width": 300,
+          "height": 105,
+          "config": "{\"name\": \"d3284ec44e504b66a0d5e2b3f152f6d5\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 640, \"y\": 20, \"z\": 0, \"width\": 300, \"height\": 105}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"Agg1(data_quality.pct_occupancy_unknown)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"data_quality\", \"Type\": 0}], \"Select\": [{\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"pct_occupancy_unknown\"}}, \"Function\": 1}, \"Name\": \"Agg1(data_quality.pct_occupancy_unknown)\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Occupancy unreported %'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"labels\": [{\"properties\": {\"color\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#F2A900'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 950,
+          "y": 20,
+          "z": 0,
+          "width": 310,
+          "height": 105,
+          "config": "{\"name\": \"5930a7c0add34bc3a787c343eb3f6a56\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 950, \"y\": 20, \"z\": 0, \"width\": 310, \"height\": 105}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"Agg0(data_quality.observed_once)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"data_quality\", \"Type\": 0}], \"Select\": [{\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"observed_once\"}}, \"Function\": 0}, \"Name\": \"Agg0(data_quality.observed_once)\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Seen only once'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}, \"objects\": {\"labels\": [{\"properties\": {\"color\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 145,
+          "z": 0,
+          "width": 1240,
+          "height": 250,
+          "config": "{\"name\": \"007c4d6eff644350a2cf9c21ed5684df\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 145, \"z\": 0, \"width\": 1240, \"height\": 250}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"projections\": {\"Values\": [{\"queryRef\": \"pipeline_health.station_name\"}, {\"queryRef\": \"pipeline_health.last_run_status\"}, {\"queryRef\": \"pipeline_health.last_run_departures\"}, {\"queryRef\": \"pipeline_health.minutes_since_last_run\"}, {\"queryRef\": \"pipeline_health.runs_last_24h\"}, {\"queryRef\": \"pipeline_health.failures_last_24h\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"pipeline_health\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"station_name\"}, \"Name\": \"pipeline_health.station_name\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"last_run_status\"}, \"Name\": \"pipeline_health.last_run_status\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"last_run_departures\"}, \"Name\": \"pipeline_health.last_run_departures\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"minutes_since_last_run\"}, \"Name\": \"pipeline_health.minutes_since_last_run\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"runs_last_24h\"}, \"Name\": \"pipeline_health.runs_last_24h\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"failures_last_24h\"}, \"Name\": \"pipeline_health.failures_last_24h\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Pipeline freshness by station'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 405,
+          "z": 0,
+          "width": 1240,
+          "height": 245,
+          "config": "{\"name\": \"89d9619d76254d82a8f422e0d1f9d37b\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 405, \"z\": 0, \"width\": 1240, \"height\": 245}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"projections\": {\"Values\": [{\"queryRef\": \"Agg0(data_quality.distinct_dates)\"}, {\"queryRef\": \"Agg0(data_quality.distinct_stations)\"}, {\"queryRef\": \"Agg1(data_quality.avg_observations)\"}, {\"queryRef\": \"Agg0(data_quality.confirmed_departed)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s0\", \"Entity\": \"data_quality\", \"Type\": 0}], \"Select\": [{\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"distinct_dates\"}}, \"Function\": 0}, \"Name\": \"Agg0(data_quality.distinct_dates)\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"distinct_stations\"}}, \"Function\": 0}, \"Name\": \"Agg0(data_quality.distinct_stations)\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"avg_observations\"}}, \"Function\": 1}, \"Name\": \"Agg1(data_quality.avg_observations)\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s0\"}}, \"Property\": \"confirmed_departed\"}}, \"Function\": 0}, \"Name\": \"Agg0(data_quality.confirmed_departed)\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Coverage \\u2014 the pipeline samples weekday peaks only, by design'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"753746702dbc4bcdb7e29da0b529b64c\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Scorecard'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionExec'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 176,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"35a2edeb1ce74a3cb244cb4d279b1e27\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 176, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Rush hour'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionRush'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 332,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"85201aa965f847e5bf74e4a904c22373\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 332, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Train class'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionClass'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 488,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"3914115dc9fa4ebe8cefa86b9eee4a8e\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 488, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Platforms'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionPlatforms'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 644,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"a9d02e2f393d460b9fdd6854636b0636\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 644, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Hubs'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionHubs'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 800,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"6ea591e7d9a54f5ba05c37fb9ebc7569\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 800, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Evolution'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionEvolution'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 956,
+          "y": 668,
+          "z": 0,
+          "width": 148,
+          "height": 32,
+          "config": "{\"name\": \"5a3b71c6fc9f4ea18f22ae6a69b8e328\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 956, \"y\": 668, \"z\": 0, \"width\": 148, \"height\": 32}}], \"singleVisual\": {\"visualType\": \"actionButton\", \"drillFilterOtherVisuals\": true, \"objects\": {\"text\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Services'\"}}}, \"fontColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#1B3A5C'\"}}}}}, \"fontSize\": {\"expr\": {\"Literal\": {\"Value\": \"10D\"}}}}}], \"icon\": [{\"properties\": {\"shapeType\": {\"expr\": {\"Literal\": {\"Value\": \"'blank'\"}}}}}], \"outline\": [{\"properties\": {\"lineColor\": {\"solid\": {\"color\": {\"expr\": {\"Literal\": {\"Value\": \"'#7A8B99'\"}}}}}}}]}, \"vcObjects\": {\"visualLink\": [{\"properties\": {\"type\": {\"expr\": {\"Literal\": {\"Value\": \"'PageNavigation'\"}}}, \"navigationSection\": {\"expr\": {\"Literal\": {\"Value\": \"'ReportSectionServices'\"}}}}}]}}}",
+          "filters": "[]"
+        }
+      ]
+    }
+  ],
+  "filters": "[]"
+}

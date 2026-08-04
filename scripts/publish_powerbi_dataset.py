@@ -164,7 +164,12 @@ MEASURES: dict[str, tuple[dict[str, str], ...]] = {
                         "'departures'[is_on_time_6min] = TRUE()), "
                         "COUNTA('departures'[is_on_time_6min]))"),
          "formatString": "0.0%"},
-        {"name": "On time 2min %",
+        # The headline KPI of the sprint-3 brief: on time means under 2 minutes.
+        # Kept alongside the 6-minute measure rather than replacing it — 6 min is
+        # the UIC/industry threshold the rest of this warehouse reports on, and
+        # showing both is what makes the gap between them legible (a network can
+        # look excellent at 6 min and poor at 2).
+        {"name": "On-Time Rate %",
          "expression": ("DIVIDE(CALCULATE(COUNTA('departures'[is_on_time_2min]), "
                         "'departures'[is_on_time_2min] = TRUE()), "
                         "COUNTA('departures'[is_on_time_2min]))"),
@@ -173,6 +178,28 @@ MEASURES: dict[str, tuple[dict[str, str], ...]] = {
          "expression": ("CALCULATE(AVERAGE('departures'[delay_seconds]), "
                         "'departures'[is_canceled] = FALSE())"),
          "formatString": "0.0"},
+        # Minutes read better than seconds to a non-technical board, which is who
+        # the brief says the dashboard is for.
+        {"name": "Mean delay min",
+         "expression": ("DIVIDE(CALCULATE(AVERAGE('departures'[delay_seconds]), "
+                        "'departures'[is_canceled] = FALSE()), 60)"),
+         "formatString": "0.0"},
+        # TOTAL delay, not average — the brief asks which train class "accounts
+        # for the most delayed minutes", which is a sum and ranks completely
+        # differently from a mean. InterCity has the largest total (volume) while
+        # ICE has by far the worst average; reporting only one of those would
+        # point the operator at the wrong problem.
+        # Verified against the source: delay_seconds is 0..5220 with no negative
+        # values, so no clamping is needed to stop early departures netting off
+        # late ones.
+        {"name": "Delay minutes",
+         "expression": ("DIVIDE(CALCULATE(SUM('departures'[delay_seconds]), "
+                        "'departures'[is_canceled] = FALSE()), 60)"),
+         "formatString": "#,0"},
+        {"name": "Share of delay %",
+         "expression": ("DIVIDE([Delay minutes], "
+                        "CALCULATE([Delay minutes], ALL('departures')))"),
+         "formatString": "0.0%"},
         {"name": "Cancelled %", "expression": "DIVIDE([Cancellations], [Departures])",
          "formatString": "0.0%"},
         {"name": "Platform changes",

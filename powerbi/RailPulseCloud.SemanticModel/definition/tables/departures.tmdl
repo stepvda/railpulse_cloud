@@ -1,0 +1,220 @@
+table departures
+
+	column record_id
+		dataType: int64
+		sourceColumn: record_id
+		lineageTag: 7cd24d7a-d175-5c47-8be0-2f2c44aa8dcf
+
+	column station_name
+		dataType: string
+		sourceColumn: station_name
+		lineageTag: 43ff5a37-c521-50ab-aa21-927a974d2eb9
+
+	column station_country
+		dataType: string
+		sourceColumn: station_country
+		lineageTag: e888e5a8-08f9-5b15-a2b7-a6e750b8a943
+
+	column station_latitude
+		dataType: double
+		sourceColumn: station_latitude
+		lineageTag: 48e6fe2a-6481-5155-86c3-95386c1b9aa8
+
+	column station_longitude
+		dataType: double
+		sourceColumn: station_longitude
+		lineageTag: a306bee1-a0b3-5e1e-835a-df351f3c61cf
+
+	column destination_name
+		dataType: string
+		sourceColumn: destination_name
+		lineageTag: e28a2c2e-3277-5e80-b111-b6885701139d
+
+	column destination_country
+		dataType: string
+		sourceColumn: destination_country
+		lineageTag: 4e355844-653f-5507-a31d-c571a2c05719
+
+	column is_international
+		dataType: boolean
+		sourceColumn: is_international
+		lineageTag: 4fee6f88-c291-5ded-ae26-0072ffea381f
+
+	column platform_label
+		dataType: string
+		sourceColumn: platform_label
+		lineageTag: 99db3ac1-a6bf-500e-b6f7-a0eb4159631d
+
+	column platform_is_normal
+		dataType: boolean
+		sourceColumn: platform_is_normal
+		lineageTag: 09bbd866-7f67-5b02-983b-3c19a36bd529
+
+	column vehicle_name
+		dataType: string
+		sourceColumn: vehicle_name
+		lineageTag: ebab73dd-6056-52ee-8f4d-dd2cbe45aac6
+
+	column vehicle_type
+		dataType: string
+		sourceColumn: vehicle_type
+		lineageTag: 64713f14-1d32-5691-b953-6d60b2d38b4c
+
+	column service_line
+		dataType: string
+		sourceColumn: service_line
+		lineageTag: 9d13da89-dee9-52c7-a4ab-04c92997ed1d
+
+	column scheduled_departure_local
+		dataType: dateTime
+		sourceColumn: scheduled_departure_local
+		lineageTag: b57d9519-d0f0-5518-a083-61b8e554c778
+
+	column date_key
+		dataType: dateTime
+		sourceColumn: date_key
+		lineageTag: c04cd725-4cec-5d34-bf9a-591b09e71d28
+
+	column hour_of_day
+		dataType: int64
+		sourceColumn: hour_of_day
+		lineageTag: cf408bc1-c32d-566e-b12c-5acbc2e211fe
+
+	column day_type
+		dataType: string
+		sourceColumn: day_type
+		lineageTag: 621a33e8-6725-576c-a2cb-30a3789db8d4
+
+	column peak_window
+		dataType: string
+		sourceColumn: peak_window
+		lineageTag: bd740d71-c42b-5c67-90f7-59e281969325
+
+	column delay_seconds
+		dataType: int64
+		sourceColumn: delay_seconds
+		lineageTag: 661da7f2-a8c7-5c70-8395-f9a389e57e9b
+
+	column delay_minutes
+		dataType: double
+		sourceColumn: delay_minutes
+		lineageTag: 47d5bfbc-1c25-5242-97c9-5a7b4bd03413
+
+	column delay_bucket
+		dataType: string
+		sourceColumn: delay_bucket
+		lineageTag: c895557f-08a0-538f-a5d3-4394a694234f
+
+	column delay_bucket_order
+		dataType: int64
+		sourceColumn: delay_bucket_order
+		lineageTag: ccf860f0-d6ec-5c87-85d3-abedf838534c
+
+	column is_on_time_2min
+		dataType: boolean
+		sourceColumn: is_on_time_2min
+		lineageTag: 89f776f4-0fa6-5d4f-b33e-d89392565a30
+
+	column is_on_time_6min
+		dataType: boolean
+		sourceColumn: is_on_time_6min
+		lineageTag: 7174bd9b-0aaa-5478-b059-aa253fa3bc6e
+
+	column is_canceled
+		dataType: boolean
+		sourceColumn: is_canceled
+		lineageTag: 76354fbc-f78d-52cd-92c6-d74ff3fdefd0
+
+	column has_left
+		dataType: boolean
+		sourceColumn: has_left
+		lineageTag: 530406c2-35f2-5439-b1a9-0489bdd3405a
+
+	column occupancy
+		dataType: string
+		sourceColumn: occupancy
+		lineageTag: e20cd7fd-b759-5a16-a5cc-c50c32e6a137
+
+	column observation_count
+		dataType: int64
+		sourceColumn: observation_count
+		lineageTag: cef674b1-1ccf-504e-8b84-e38da4ad21f8
+
+	column delay_first_seen_s
+		dataType: int64
+		sourceColumn: delay_first_seen_s
+		lineageTag: 244fc91e-8b53-5853-982b-4a4ae71fedc5
+
+	column delay_growth_s
+		dataType: int64
+		sourceColumn: delay_growth_s
+		lineageTag: 25dbab53-9276-542c-acd1-c1fc5a161e07
+
+	measure Departures = COUNTROWS('departures')
+		lineageTag: 1ba3c686-7de5-5f3f-af7b-5bcbb41e388d
+
+	measure Cancellations = CALCULATE(COUNTROWS('departures'), 'departures'[is_canceled] = TRUE())
+		lineageTag: b8508358-a447-589b-9bf3-34bd5b8c1b05
+
+	measure 'Trains measured' = COUNTA('departures'[is_on_time_6min])
+		lineageTag: 3ccd689f-cae8-5e4b-99d5-4c48d26cd634
+
+	measure 'On time 6min %' = DIVIDE(CALCULATE(COUNTA('departures'[is_on_time_6min]), 'departures'[is_on_time_6min] = TRUE()), COUNTA('departures'[is_on_time_6min]))
+		formatString: 0.0%
+		lineageTag: 4559dda0-33db-534e-8f36-fc24a8ff27b4
+
+	measure 'On-Time Rate %' = DIVIDE(CALCULATE(COUNTA('departures'[is_on_time_2min]), 'departures'[is_on_time_2min] = TRUE()), COUNTA('departures'[is_on_time_2min]))
+		formatString: 0.0%
+		lineageTag: 8cf51f22-bdab-5803-8269-358bcf204162
+
+	measure 'Mean delay s' = CALCULATE(AVERAGE('departures'[delay_seconds]), 'departures'[is_canceled] = FALSE())
+		formatString: 0.0
+		lineageTag: 79217a1d-064a-5ffd-831f-188dce61cc5a
+
+	measure 'Mean delay min' = DIVIDE(CALCULATE(AVERAGE('departures'[delay_seconds]), 'departures'[is_canceled] = FALSE()), 60)
+		formatString: 0.0
+		lineageTag: 976606ad-0c7d-5ccf-b62c-8a719bae7b69
+
+	measure 'Delay minutes' = DIVIDE(CALCULATE(SUM('departures'[delay_seconds]), 'departures'[is_canceled] = FALSE()), 60)
+		formatString: #,0
+		lineageTag: 88d8ddb5-515d-5008-9c34-27f2d34c1947
+
+	measure 'Share of delay %' = DIVIDE([Delay minutes], CALCULATE([Delay minutes], ALL('departures')))
+		formatString: 0.0%
+		lineageTag: 1b6cb6dc-8513-5d79-8c25-e0cf90ae3338
+
+	measure 'Cancelled %' = DIVIDE([Cancellations], [Departures])
+		formatString: 0.0%
+		lineageTag: a96564e0-64d5-514c-b663-59e82b327dcf
+
+	measure 'Platform changes' = CALCULATE(COUNTROWS('departures'), 'departures'[platform_is_normal] = FALSE())
+		lineageTag: 8180c53d-f85d-53c5-bca8-d7c4e6b35767
+
+	measure 'Reliability score' = DIVIDE(CALCULATE(COUNTA('departures'[is_on_time_6min]), 'departures'[is_on_time_6min] = TRUE()) - [Cancellations], COUNTA('departures'[is_on_time_6min]))
+		formatString: 0.0%
+		lineageTag: 625cdd8e-6210-54f4-9626-ee2655f50a93
+
+	measure 'Days observed' = DISTINCTCOUNT('departures'[date_key])
+		lineageTag: 325e50c4-6c3c-5337-9d5b-683bbd027ce1
+
+	measure 'Departures per day' = DIVIDE([Departures], [Days observed])
+		formatString: 0.0
+		lineageTag: 2ddcf077-a988-5d8a-a692-b946ed893d8e
+
+	measure 'Delay growth s' = AVERAGE('departures'[delay_growth_s])
+		formatString: 0.0
+		lineageTag: 2988b82b-ed97-5f41-a9a1-b79c1700a7e1
+
+	measure 'Deteriorated 5min+' = CALCULATE(COUNTROWS('departures'), 'departures'[delay_growth_s] > 300)
+		lineageTag: 93939478-59f0-5332-b77e-a581b019c107
+
+	partition departures = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(ServerName, DatabaseName),
+				    Data = Source{[Schema="dbo",Item="v_bi_departures"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

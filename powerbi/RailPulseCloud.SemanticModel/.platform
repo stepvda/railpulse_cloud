@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "RailPulse Cloud"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "e18ed1ac-3751-58c7-b331-a2692042154d"
+  }
+}

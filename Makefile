@@ -28,7 +28,7 @@ RESOURCE_GROUP := $(shell [ -f $(SECRET_FILE) ] && grep -E '^RESOURCE_GROUP=' $(
         migrate seed ingest stats health logs pause teardown \
         local-migrate local-ingest local-verify query clean \
         provision-web deploy-web web webapp-local webapp-logs web-url \
-        bi-reader bi-publish bi-url
+        bi-reader bi-publish bi-report bi-refresh bi-url bi-pbip
 
 help:  ## Show this help
 	@grep -hE '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -132,7 +132,7 @@ webapp-local:  ## Run the dashboard on this machine against Azure SQL
 bi-reader:  ## Create/refresh the least-privilege SQL login for Power BI
 	set -a; . ./$(SECRET_FILE); set +a; $(PYTHON) scripts/create_bi_reader.py
 
-bi-report:  ## Build the 7-page Power BI report (model + measures + data) and print its URL
+bi-report:  ## Build the 8-page Power BI report (model + measures + data) and print its URL
 	$(PYTHON) scripts/build_powerbi_report.py
 
 bi-refresh:  ## Re-push the rows into the existing Power BI model, nothing else
@@ -140,6 +140,9 @@ bi-refresh:  ## Re-push the rows into the existing Power BI model, nothing else
 
 bi-url:  ## Print the Power BI report URL
 	@$(PYTHON) scripts/build_powerbi_report.py --url
+
+bi-pbip:  ## Write powerbi/ as a PBIP project (text-based, opens in Desktop)
+	$(PYTHON) scripts/export_pbip.py
 
 bi-publish:  ## Push the warehouse into a Power BI dataset only (no report)
 	$(PYTHON) scripts/publish_powerbi_dataset.py

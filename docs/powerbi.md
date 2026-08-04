@@ -58,7 +58,7 @@ through the REST API.
 | | **A — scripted (model *and* report)** | **B — Azure SQL connection (interactive)** |
 |---|---|---|
 | how | `python scripts/build_powerbi_report.py` | click through the web client |
-| you get | a 7-page report, built | a live, self-refreshing model |
+| you get | an 8-page report, built | a live, self-refreshing model |
 | data | **snapshot** — re-run to refresh | Import + scheduled refresh, 1–2×/day |
 | licence | Free ✅ | Free ✅ |
 | gateway | none | none (Azure SQL is a cloud source) |
@@ -84,7 +84,7 @@ sufficient for the whole BI surface) and pushes five tables with both
 relationships already defined:
 
 ```
-departures        3 578 rows     dim_date   730     dim_hour   24
+departures        8 907 rows     dim_date   730     dim_hour   24
 pipeline_health      10 rows     data_quality  1
 departures[date_key]    -> dim_date[date_key]
 departures[hour_of_day] -> dim_hour[hour_of_day]
@@ -114,30 +114,36 @@ need that one click in the browser (Table tools → Mark as date table →
 
 ## The report is generated, not hand-built
 
-`scripts/build_powerbi_report.py` creates the **same seven pages the Streamlit app
-has**, as a real Power BI report, through the API. Power BI Desktop is Windows-only,
-so the alternative was a written click-by-click guide — which puts the work back
-on the reader and drifts from the app the moment either side changes.
+`scripts/build_powerbi_report.py` creates a real Power BI report through the API —
+model, measures, relationships, theme, pages and visuals. Power BI Desktop is
+Windows-only, so the alternative was a written click-by-click guide, which puts
+the work back on the reader and drifts from the app the moment either side changes.
 
 ```
 $ python scripts/build_powerbi_report.py
-  created model (ca329922-…) — 5 tables, 13 measures
-    departures         8753 rows      dim_hour         24 rows
+  created model (c409483c-…) — 5 tables, 16 measures
+    departures         8907 rows      dim_hour         24 rows
     dim_date            730 rows      pipeline_health  10 rows
-  created report — 7 pages, 31 visuals
+  created report — 8 pages, 104 visuals
 ```
 
-| page | mirrors the Streamlit page | headline visual |
+| page | answers | headline visual |
 |---|---|---|
-| Overview | Overview | 6 KPI cards, hour histogram, delay buckets |
-| Hub leaderboard | Hub leaderboard | punctuality by hub, volume-vs-delay scatter |
-| Peak hours | Peak hours | `Departures per day` by hour × day type |
-| Platform bottlenecks | Platform bottlenecks | load and mean delay per platform |
-| Delay evolution | Delay evolution | first reading vs latest, per train |
-| Services & destinations | Services & destinations | service class scatter, top destinations |
-| Data quality & pipeline | Data quality + Pipeline | freshness per station, coverage |
+| Executive scorecard | is the network on time? | On-Time Rate % as the dominant card |
+| Rush hour matrix | *when* does it break? | volume + delay on one pair of axes |
+| Train class breakdown | *what* breaks? | total delayed minutes, and the mean beside it |
+| Platform congestion | *where* does it break? | delay by platform, station slicer |
+| Hub comparison | *who* runs best? | on-time rate vs mean delay, 3 slicers |
+| Delay evolution | do delays grow while you wait? | first reading vs latest, per train |
+| Services & destinations | which routes carry the pain? | destination scatter |
+| Data quality & pipeline | should I trust this? | freshness per station, coverage |
 
-**The measures live in the model, not in the visuals.** All 13 are defined once, on
+The first five are the sprint-3 brief's must-haves and its cross-hub
+nice-to-have; the last three carry the Streamlit dashboard's remaining analysis
+so the two stay in step. Page-by-page design rationale is in the
+[project README](../README.md#-the-dashboard-design-choices-and-why).
+
+**The measures live in the model, not in the visuals.** All 16 are defined once, on
 the semantic model, so every visual — and any report anyone builds later over the
 same dataset — shares one definition of "on time". That is the same argument
 `create_bi_reader.py` makes with permissions and `03_views.sql` makes with SQL.
@@ -376,7 +382,7 @@ decimals; DAX returns them as ratios.
 
 ## A four-page report that matches the analysis
 
-Route A already builds seven pages for you (above). This is the **Route B**
+Route A already builds eight pages for you (above). This is the **Route B**
 equivalent — what to build by hand on the interactive model, mirroring
 `sql/analysis/` so the Power BI report and the graded SQL answer the same
 questions:
@@ -429,3 +435,115 @@ az sql server firewall-rule create -g rg-railpulse-cloud -s sql-railpulse-<suffi
 * **`dim_date` covers 2026-01-01 → 2027-12-31.** Extend the range in
   `sql/05_bi_dimensions.sql` and re-run the migration if the project outlives it;
   the file is idempotent and only inserts missing days.
+
+---
+
+# Sprint 3 — the operations dashboard
+
+The sprint-3 brief asks for a connected, modelled, interactive executive
+dashboard. `make bi-report` builds it; this section maps the brief's requirements
+to what exists, including the two it is **not** possible to satisfy on this
+licence and what was done instead.
+
+## Must-haves
+
+| # | Requirement | Where it lives | Design note |
+|---|---|---|---|
+| 1 | **Punctuality scorecard** — On-Time Rate %, on time = under 2 min | Executive scorecard, the largest card on the page | `On-Time Rate %` uses `is_on_time_2min`. The 6-minute UIC rate sits beside it: a network reads as excellent at 6 min and merely adequate at 2, and showing one threshold alone lets the choice flatter the result. A test pins which measure uses which flag — transposing them is invisible and moves the headline by several points. |
+| 2 | **Rush hour matrix** — volume vs average delay by hour | Rush hour matrix, `lineClusteredColumnComboChart` | One pair of axes, not two charts: an hour is a bottleneck only when volume *and* delay are high. Bars are `Departures per day`, never a raw count — the timer samples peaks harder than off-peak, so a raw count would report the capture schedule as the peak. |
+| 3 | **Train class breakdown** — which class accounts for the most delayed minutes | Train class breakdown | The brief's question is a **sum**, so `Delay minutes` is a `SUM`. The mean is charted next to it because the two rankings disagree: InterCity leads the total (3 670 min) through volume; ICE leads the average at 13.6 min/train on 63 trains. Answering with only one sends the operator after the wrong class. |
+| 4 | **Platform congestion** | Platform congestion, with a station slicer | The slicer is load-bearing. "Platform 5" pooled across ten hubs averages unrelated tracks; the number only means something inside one station. |
+
+## Nice-to-haves
+
+| Requirement | Status |
+|---|---|
+| **Cross-hub comparison with slicers** | ✅ Hub comparison page — 3 slicers (hub, day type, peak window). On-time rate and mean delay are charted separately *because they disagree*, and the disagreement is the finding. |
+| **Navigation** | ✅ A navigation bar on every page (56 `actionButton` visuals). A test asserts every button targets a page that exists and that every page is reachable — a button pointing at a missing section id is accepted silently and simply does nothing when clicked. |
+| **Custom colours** | ✅ A registered theme resource *and* an explicit colour on every visual. Green = on time, red = delay/cancellation, amber = attention, navy = neutral volume. Nothing is coloured decoratively. |
+| **Scheduled refresh** | ⚠️ Not possible for this model — see below. |
+
+## The two things this licence cannot do
+
+Stated plainly rather than worked around, because both are checklist items.
+
+### A `.pbix` file does not exist for this report
+
+```
+GET /v1.0/myorg/reports/{id}/Export
+  -> 404 ExportPBIX_ModelessWorkbookNotFound
+```
+
+A report built through the API over a **push dataset** has no underlying workbook
+for the service to package. This is not a permission or a flag — the artifact
+isn't there. And "Publish to web", the only mechanism producing a link a grader
+could open without signing in, needs Pro; image export is already disabled
+tenant-wide (`Export report to image is disabled on tenant level`), which is the
+same restriction showing up elsewhere.
+
+**What was done instead:** `make bi-pbip` writes [`powerbi/`](../powerbi/) — a
+**PBIP project**, the plain-text format Power BI Desktop reads and Microsoft
+recommends for source control. It is generated from the same
+`TABLES`/`MEASURES`/`RELATIONSHIPS` contract and the same `build_pages()` as the
+published report, so the two cannot drift.
+
+It is arguably the better artifact for a repository: a `.pbix` is an opaque binary
+git cannot diff, while this is reviewable text — and it directly answers the
+brief's own warning about not losing work when a trial licence lapses.
+
+```
+powerbi/
+  RailPulseCloud.pbip
+  RailPulseCloud.SemanticModel/definition/model.tmdl        16 measures, 2 relationships
+                              definition/tables/*.tmdl      5 tables
+                              definition/expressions.tmdl   ServerName / DatabaseName
+  RailPulseCloud.Report/report.json                         8 pages, 104 visuals
+```
+
+Unlike the published report, this model connects **directly to Azure SQL in Import
+mode** — Scenario A of the brief, and the thing a push dataset cannot be. The
+server is an M **parameter** with a placeholder default, so no credential is
+committed; a test fails the build if any value from `.azure-railpulse.env` ever
+appears in `powerbi/`.
+
+> **Honest limit:** Power BI Desktop is Windows-only, so this project has **not
+> been opened in Desktop**. Every file is schema-valid JSON or tab-indented TMDL
+> generated from the live contract, but "generated correctly" is a weaker claim
+> than "opened and refreshed", and it is the only claim made.
+
+### Scheduled refresh needs the interactive model, not this one
+
+A push dataset **has no data source**, so there is nothing for Power BI to refresh
+*from* — this is not a Free-licence restriction, the refresh schedule simply does
+not apply to it. Two real options:
+
+**1. Refresh the push dataset on a schedule from here.** `make bi-refresh`
+re-reads the views and re-pushes the rows. On macOS, matched to the Function
+timer's weekday peaks:
+
+```bash
+# ~/Library/LaunchAgents/com.railpulse.bi.plist runs this twice a day
+cd ~/Dev/AI_Data_Science_training/railpulse_cloud && make bi-refresh
+```
+
+Full automation needs a service principal rather than the interactive `az login`
+token this uses, which a student subscription may not permit — so treat this as
+"scheduled on the workstation", not "scheduled in the cloud".
+
+**2. Use the PBIP / interactive Import model.** That one *does* have a data
+source, so Power BI Service gives it a native refresh schedule — **up to 8×/day on
+a Free licence, with no gateway**, because Azure SQL is a cloud source. This is
+the correct answer to the brief's nice-to-have, and the reason the PBIP model is
+built as Import against Azure SQL rather than as a copy of the push dataset.
+
+Set the cadence **inside a capture window**. The timer only collects during
+weekday 06–09 and 16–19 Brussels, so a 03:00 refresh copies a stale snapshot and
+wakes the serverless database for nothing.
+
+### Screenshots
+
+`POST /reports/{id}/ExportTo` returns `403 — Export report to image is disabled on
+tenant level`, so the report cannot be rendered to PNG or PDF from here. Capturing
+the pages requires opening the report in a browser and screenshotting them; there
+is no scripted path on this tenant, and nothing in this repository claims to be a
+rendered screenshot of a page that has not been opened.

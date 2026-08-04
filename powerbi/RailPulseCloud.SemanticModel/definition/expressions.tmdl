@@ -1,0 +1,7 @@
+expression ServerName = "sql-railpulse-<suffix>.database.windows.net" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 2542feef-7830-5542-9f55-6f58e3046887
+	annotation PBI_NavigationStepName = Navigation
+
+expression DatabaseName = "railpulse" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: f0d565fb-020a-5371-b0d3-7d4492f97099
+	annotation PBI_NavigationStepName = Navigation

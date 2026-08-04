@@ -200,7 +200,7 @@ def field(spec: dict, source: str) -> dict:
 
 def visual(vtype: str, x: int, y: int, w: int, h: int,
            buckets: dict[str, list[dict]], *, title: str | None = None,
-           sort: tuple[dict, str] | None = None) -> dict:
+           sort: tuple[dict, str] | None = None, color: str | None = None) -> dict:
     """One visualContainer in the legacy Layout shape.
 
     `buckets` maps a visual role (Category, Y, Series, Values...) to field specs.
@@ -239,10 +239,64 @@ def visual(vtype: str, x: int, y: int, w: int, h: int,
     if title:
         single["vcObjects"] = {"title": [{"properties": {
             "show": {"expr": {"Literal": {"Value": "true"}}},
-            "text": {"expr": {"Literal": {"Value": f"'{title}'"}}}}}]}
+            "text": {"expr": {"Literal": {"Value": f"'{title}'"}}},
+            "fontColor": {"solid": {"color": {
+                "expr": {"Literal": {"Value": f"'{INK}'"}}}}}}}]}
+    # Per-visual colour as well as the report theme: the service rewrites the
+    # theme resource's item name on upload, so the theme alone is not a safe bet.
+    if color:
+        fill = {"solid": {"color": {"expr": {"Literal": {"Value": f"'{color}'"}}}}}
+        single["objects"] = {"dataPoint": [{"properties": {"fill": fill}}]}
+        if vtype == "card":
+            single["objects"] = {"labels": [{"properties": {"color": fill}}]}
 
     # `config` is a JSON-encoded STRING here, not an object. An object is
     # accepted silently and renders an empty page.
+    config = {"name": uuid.uuid4().hex,
+              "layouts": [{"id": 0, "position": {"x": x, "y": y, "z": 0,
+                                                 "width": w, "height": h}}],
+              "singleVisual": single}
+    return {"x": x, "y": y, "z": 0, "width": w, "height": h,
+            "config": json.dumps(config), "filters": "[]"}
+
+
+def slicer(x: int, y: int, w: int, h: int, table: str, column: str,
+           *, title: str | None = None) -> dict:
+    """A slicer. Confirmed to survive a round-trip through the service.
+
+    Slicers are how this report delivers the brief's cross-hub comparison and its
+    "filter to Brussels-Central" platform question — one filtered page instead of
+    ten near-identical ones.
+    """
+    return visual("slicer", x, y, w, h, {"Values": [{"t": table, "c": column}]},
+                  title=title)
+
+
+def button(x: int, y: int, w: int, h: int, label: str, target: str) -> dict:
+    """A page-navigation button.
+
+    Unlike every other visual this has NO prototypeQuery and no projections — it
+    queries nothing. The generator and the tests both have to tolerate that.
+    """
+    single = {
+        "visualType": "actionButton",
+        "drillFilterOtherVisuals": True,
+        "objects": {
+            "text": [{"properties": {
+                "text": {"expr": {"Literal": {"Value": f"'{label}'"}}},
+                "fontColor": {"solid": {"color": {
+                    "expr": {"Literal": {"Value": f"'{INK}'"}}}}},
+                "fontSize": {"expr": {"Literal": {"Value": "10D"}}}}}],
+            "icon": [{"properties": {
+                "shapeType": {"expr": {"Literal": {"Value": "'blank'"}}}}}],
+            "outline": [{"properties": {
+                "lineColor": {"solid": {"color": {
+                    "expr": {"Literal": {"Value": f"'{RULE}'"}}}}}}}],
+        },
+        "vcObjects": {"visualLink": [{"properties": {
+            "type": {"expr": {"Literal": {"Value": "'PageNavigation'"}}},
+            "navigationSection": {"expr": {"Literal": {"Value": f"'{target}'"}}}}}]},
+    }
     config = {"name": uuid.uuid4().hex,
               "layouts": [{"id": 0, "position": {"x": x, "y": y, "z": 0,
                                                  "width": w, "height": h}}],
@@ -258,156 +312,325 @@ def page(name: str, display: str, visuals: list[dict]) -> dict:
 
 
 # --------------------------------------------------------------------------
+# The palette. Registered as a report theme AND applied per visual, because the
+# service rewrites the theme resource's item name on upload and it is not worth
+# betting the report's legibility on that resolving.
+BRAND = "#0B6E4F"      # rail green — the neutral/positive series
+ALERT = "#C1272D"      # delay and cancellation
+WARN = "#F2A900"       # attention, second series
+INK = "#1B3A5C"        # text
+RULE = "#7A8B99"       # borders, gridlines
+
+THEME = {
+    "name": "RailPulse",
+    "dataColors": [BRAND, ALERT, WARN, INK, RULE, "#4A9D7C", "#8C1A1F", "#B98600"],
+    "background": "#FFFFFF",
+    "foreground": INK,
+    "tableAccent": BRAND,
+    "good": BRAND,
+    "bad": ALERT,
+    "neutral": RULE,
+}
+
+
+# --------------------------------------------------------------------------
 D, H, Q, P = "departures", "dim_hour", "data_quality", "pipeline_health"
 CARD_H, ROW1 = 105, 20
 
+#: Page ids, referenced by the navigation buttons. Kept as constants because a
+#: button pointing at a section id that does not exist is accepted silently and
+#: simply does nothing when clicked.
+EXEC = "ReportSectionExec"
+RUSH = "ReportSectionRush"
+CLASS = "ReportSectionClass"
+PLATFORM = "ReportSectionPlatforms"
+HUBS = "ReportSectionHubs"
+EVOLUTION = "ReportSectionEvolution"
+SERVICES = "ReportSectionServices"
+QUALITY = "ReportSectionQuality"
+
+#: The nav bar, repeated on every page. Order is the reading order of the story:
+#: how are we doing -> when does it break -> what breaks -> where -> who.
+NAV = [(EXEC, "Scorecard"), (RUSH, "Rush hour"), (CLASS, "Train class"),
+       (PLATFORM, "Platforms"), (HUBS, "Hubs"), (EVOLUTION, "Evolution"),
+       (SERVICES, "Services"), (QUALITY, "Data quality")]
+
+
+def nav_bar(current: str) -> list[dict]:
+    """Page-navigation buttons along the foot of every page.
+
+    A Power BI report's own page tabs are easy to miss in a browser, and the
+    brief asks for a navigation system a stakeholder can actually use. The button
+    for the current page is omitted rather than disabled, so the bar always shows
+    where you can go rather than where you are.
+    """
+    targets = [(section, label) for section, label in NAV if section != current]
+    width = 148
+    return [button(20 + i * (width + 8), 668, width, 32, label, section)
+            for i, (section, label) in enumerate(targets)]
+
 
 def build_pages() -> list[dict]:
-    """One page per analytical page of the Streamlit app, over the same views
-    and the same metric definitions."""
+    """The report, one page per operational question.
+
+    The first five pages are the sprint-3 brief's must-haves and cross-hub
+    nice-to-have; the last three carry over the Streamlit dashboard's remaining
+    analysis so the two stay in step.
+    """
     pages: list[dict] = []
 
-    # ---- Overview — mirrors the Streamlit landing page -------------------
-    kpis = ["Departures", "On time 6min %", "On time 2min %",
-            "Mean delay s", "Cancellations", "Platform changes"]
-    overview = [visual("card", 20 + i * 208, ROW1, 198, CARD_H,
-                       {"Values": [{"t": D, "m": m}]}, title=m)
-                for i, m in enumerate(kpis)]
-    overview += [
-        visual("clusteredColumnChart", 20, 145, 620, 275,
-               {"Category": [{"t": D, "c": "hour_of_day"}],
-                "Y": [{"t": D, "m": "Departures"}]},
-               title="Departures by local hour"),
-        visual("clusteredBarChart", 660, 145, 600, 275,
-               {"Category": [{"t": D, "c": "delay_bucket"}],
-                "Y": [{"t": D, "m": "Departures"}]},
-               title="Delay distribution"),
-        visual("tableEx", 20, 435, 1240, 265,
-               {"Values": [{"t": D, "c": "station_name"}, {"t": D, "m": "Departures"},
-                           {"t": D, "m": "On time 6min %"}, {"t": D, "m": "Mean delay s"},
-                           {"t": D, "m": "Cancellations"}]},
-               title="By station"),
-    ]
-    pages.append(page("ReportSectionOverview", "Overview", overview))
-
-    # ---- Hub leaderboard -------------------------------------------------
-    pages.append(page("ReportSectionLeaderboard", "Hub leaderboard", [
-        visual("clusteredBarChart", 20, ROW1, 620, 330,
-               {"Category": [{"t": D, "c": "station_name"}],
-                "Y": [{"t": D, "m": "On time 6min %"}]},
-               title="Punctuality by hub (under 6 min)",
-               sort=({"t": D, "m": "On time 6min %"}, "desc")),
-        visual("scatterChart", 660, ROW1, 600, 330,
-               {"Category": [{"t": D, "c": "station_name"}],
-                "X": [{"t": D, "m": "Departures"}],
-                "Y": [{"t": D, "m": "Mean delay s"}]},
-               title="Volume against mean delay"),
-        visual("tableEx", 20, 370, 1240, 330,
-               {"Values": [{"t": D, "c": "station_name"}, {"t": D, "m": "Departures"},
-                           {"t": D, "m": "On time 6min %"}, {"t": D, "m": "On time 2min %"},
-                           {"t": D, "m": "Mean delay s"}, {"t": D, "m": "Cancellations"},
-                           {"t": D, "m": "Platform changes"},
-                           {"t": D, "m": "Reliability score"}]},
-               title="Leaderboard — cancellations are excluded from the punctuality denominator"),
-    ]))
-
-    # ---- Peak hours ------------------------------------------------------
-    pages.append(page("ReportSectionPeaks", "Peak hours", [
-        visual("clusteredColumnChart", 20, ROW1, 1240, 300,
+    # ======================================================================
+    # 1. Executive scorecard  — brief must-have #1, the punctuality scorecard
+    # ======================================================================
+    # On-Time Rate % is deliberately the largest object on the page. It is the
+    # one number the board asked for, and visual hierarchy should say so.
+    scorecard = [
+        visual("card", 20, ROW1, 400, 170,
+               {"Values": [{"t": D, "m": "On-Time Rate %"}]},
+               title="ON-TIME RATE — departures under 2 min late", color=BRAND),
+        visual("card", 432, ROW1, 268, 80,
+               {"Values": [{"t": D, "m": "Departures"}]}, title="Departures", color=INK),
+        visual("card", 712, ROW1, 268, 80,
+               {"Values": [{"t": D, "m": "Mean delay min"}]},
+               title="Mean delay (min)", color=WARN),
+        visual("card", 992, ROW1, 268, 80,
+               {"Values": [{"t": D, "m": "Delay minutes"}]},
+               title="Total delay (min)", color=ALERT),
+        visual("card", 432, 110, 268, 80,
+               {"Values": [{"t": D, "m": "On time 6min %"}]},
+               title="On time at 6 min (UIC)", color=BRAND),
+        visual("card", 712, 110, 268, 80,
+               {"Values": [{"t": D, "m": "Cancellations"}]},
+               title="Cancellations", color=ALERT),
+        visual("card", 992, 110, 268, 80,
+               {"Values": [{"t": D, "m": "Platform changes"}]},
+               title="Platform changes", color=WARN),
+        # The headline chart repeats the Rush hour page in miniature, because the
+        # single most actionable fact — the evening peak is worse than the
+        # morning — should not need a click to reach.
+        visual("lineClusteredColumnComboChart", 20, 205, 780, 290,
                {"Category": [{"t": H, "c": "hour_label"}],
                 "Y": [{"t": D, "m": "Departures per day"}],
-                "Series": [{"t": D, "c": "day_type"}]},
-               title="Departures per DAY OBSERVED, not raw count — the timer samples peaks harder"),
-        visual("lineChart", 20, 335, 620, 280,
-               {"Category": [{"t": H, "c": "hour_label"}],
-                "Y": [{"t": D, "m": "Mean delay s"}]},
-               title="Mean delay by hour"),
-        visual("tableEx", 660, 335, 600, 280,
-               {"Values": [{"t": H, "c": "hour_label"}, {"t": H, "c": "peak_window"},
-                           {"t": D, "m": "Departures"}, {"t": D, "m": "Departures per day"},
-                           {"t": D, "m": "Mean delay s"}]},
-               title="By hour"),
-    ]))
+                "Y2": [{"t": D, "m": "Mean delay min"}]},
+               title="Volume and delay by hour — the evening peak runs worse than the morning"),
+        visual("clusteredBarChart", 812, 205, 448, 290,
+               {"Category": [{"t": D, "c": "station_name"}],
+                "Y": [{"t": D, "m": "On-Time Rate %"}]},
+               title="On-time rate by hub", color=BRAND,
+               sort=({"t": D, "m": "On-Time Rate %"}, "desc")),
+        visual("tableEx", 20, 505, 1240, 150,
+               {"Values": [{"t": D, "c": "station_name"}, {"t": D, "m": "Departures"},
+                           {"t": D, "m": "On-Time Rate %"}, {"t": D, "m": "Mean delay min"},
+                           {"t": D, "m": "Delay minutes"}, {"t": D, "m": "Cancellations"}]},
+               title="Network at a glance"),
+    ]
+    pages.append(page(EXEC, "Executive scorecard", scorecard + nav_bar(EXEC)))
 
-    # ---- Platform bottlenecks --------------------------------------------
-    pages.append(page("ReportSectionPlatforms", "Platform bottlenecks", [
-        visual("clusteredColumnChart", 20, ROW1, 620, 330,
+    # ======================================================================
+    # 2. Rush hour matrix  — brief must-have #2
+    # ======================================================================
+    # Volume against mean delay on one pair of axes, which is what isolates a
+    # bottleneck interval: an hour is only a problem if BOTH are high. A busy
+    # punctual hour and a quiet late hour need different responses.
+    rush = [
+        slicer(20, ROW1, 220, 300, D, "day_type", title="Day type"),
+        slicer(20, 330, 220, 300, D, "station_name", title="Hub"),
+        visual("lineClusteredColumnComboChart", 252, ROW1, 1008, 320,
+               {"Category": [{"t": H, "c": "hour_label"}],
+                "Y": [{"t": D, "m": "Departures per day"}],
+                "Y2": [{"t": D, "m": "Mean delay min"}]},
+               title="THE RUSH HOUR MATRIX — bars: departures per day observed · line: mean delay (min)"),
+        visual("lineChart", 252, 350, 500, 280,
+               {"Category": [{"t": H, "c": "hour_label"}],
+                "Y": [{"t": D, "m": "On-Time Rate %"}]},
+               title="On-time rate through the day", color=BRAND),
+        visual("tableEx", 764, 350, 496, 280,
+               {"Values": [{"t": H, "c": "hour_label"}, {"t": H, "c": "peak_window"},
+                           {"t": D, "m": "Departures"}, {"t": D, "m": "Mean delay min"},
+                           {"t": D, "m": "On-Time Rate %"}]},
+               title="By hour — read Departures before trusting a rate"),
+    ]
+    pages.append(page(RUSH, "Rush hour matrix", rush + nav_bar(RUSH)))
+
+    # ======================================================================
+    # 3. Train class breakdown  — brief must-have #3
+    # ======================================================================
+    # The brief asks which class "accounts for the most delayed minutes", which
+    # is a SUM. Ranking classes by their MEAN gives a different and equally true
+    # answer, so both are on the page: InterCity dominates the total through
+    # sheer volume, while the international classes are individually far worse.
+    # Showing only one would point the operator at the wrong problem.
+    classes = [
+        slicer(20, ROW1, 220, 300, D, "vehicle_type", title="Train class"),
+        slicer(20, 330, 220, 300, D, "day_type", title="Day type"),
+        visual("clusteredBarChart", 252, ROW1, 500, 300,
+               {"Category": [{"t": D, "c": "vehicle_type"}],
+                "Y": [{"t": D, "m": "Delay minutes"}]},
+               title="TOTAL delayed minutes by class — the brief's question",
+               color=ALERT, sort=({"t": D, "m": "Delay minutes"}, "desc")),
+        visual("clusteredBarChart", 764, ROW1, 496, 300,
+               {"Category": [{"t": D, "c": "vehicle_type"}],
+                "Y": [{"t": D, "m": "Mean delay min"}]},
+               title="MEAN delay per train — a different ranking, equally true",
+               color=WARN, sort=({"t": D, "m": "Mean delay min"}, "desc")),
+        visual("lineClusteredColumnComboChart", 252, 330, 500, 300,
+               {"Category": [{"t": D, "c": "vehicle_type"}],
+                "Y": [{"t": D, "m": "Departures"}],
+                "Y2": [{"t": D, "m": "On-Time Rate %"}]},
+               title="Volume against on-time rate"),
+        visual("tableEx", 764, 330, 496, 300,
+               {"Values": [{"t": D, "c": "vehicle_type"}, {"t": D, "m": "Departures"},
+                           {"t": D, "m": "Delay minutes"}, {"t": D, "m": "Share of delay %"},
+                           {"t": D, "m": "Mean delay min"}, {"t": D, "m": "On-Time Rate %"}]},
+               title="By class, with each one's share of all delay"),
+    ]
+    pages.append(page(CLASS, "Train class breakdown", classes + nav_bar(CLASS)))
+
+    # ======================================================================
+    # 4. Platform congestion  — brief must-have #4
+    # ======================================================================
+    # The station slicer is the point of this page: platform numbers are only
+    # meaningful within one station, and "platform 5" pooled across ten hubs is
+    # a meaningless average of unrelated tracks.
+    platforms = [
+        slicer(20, ROW1, 220, 300, D, "station_name", title="Station — pick one"),
+        slicer(20, 330, 220, 300, D, "vehicle_type", title="Train class"),
+        visual("clusteredBarChart", 252, ROW1, 500, 300,
+               {"Category": [{"t": D, "c": "platform_label"}],
+                "Y": [{"t": D, "m": "Mean delay min"}]},
+               title="Mean delay by platform — slice to one station first",
+               color=ALERT, sort=({"t": D, "m": "Mean delay min"}, "desc")),
+        visual("clusteredColumnChart", 764, ROW1, 496, 300,
                {"Category": [{"t": D, "c": "platform_label"}],
                 "Y": [{"t": D, "m": "Departures"}]},
-               title="Load by platform", sort=({"t": D, "m": "Departures"}, "desc")),
-        visual("clusteredColumnChart", 660, ROW1, 600, 330,
+               title="Traffic by platform", color=INK,
+               sort=({"t": D, "m": "Departures"}, "desc")),
+        visual("lineClusteredColumnComboChart", 252, 330, 500, 300,
                {"Category": [{"t": D, "c": "platform_label"}],
-                "Y": [{"t": D, "m": "Mean delay s"}]},
-               title="Mean delay by platform"),
-        visual("tableEx", 20, 370, 1240, 330,
+                "Y": [{"t": D, "m": "Departures"}],
+                "Y2": [{"t": D, "m": "Mean delay min"}]},
+               title="Load against delay — congestion is both at once"),
+        visual("tableEx", 764, 330, 496, 300,
                {"Values": [{"t": D, "c": "station_name"}, {"t": D, "c": "platform_label"},
-                           {"t": D, "m": "Departures"}, {"t": D, "m": "Mean delay s"},
-                           {"t": D, "m": "On time 6min %"}, {"t": D, "m": "Platform changes"}]},
-               title="Platform pressure — 'unknown' means unallocated at poll time, not missing data"),
-    ]))
+                           {"t": D, "m": "Departures"}, {"t": D, "m": "Mean delay min"},
+                           {"t": D, "m": "Delay minutes"}, {"t": D, "m": "On-Time Rate %"}]},
+               title="'unknown' means unallocated at poll time, not missing data"),
+    ]
+    pages.append(page(PLATFORM, "Platform congestion", platforms + nav_bar(PLATFORM)))
 
-    # ---- Delay evolution — only possible because the pipeline re-polls ----
-    pages.append(page("ReportSectionEvolution", "Delay evolution", [
+    # ======================================================================
+    # 5. Hub comparison  — nice-to-have: cross-hub, slicer-driven
+    # ======================================================================
+    # Mean delay and on-time rate disagree here, and that disagreement is the
+    # insight: Liege has a high mean delay but a good on-time rate (few, severe),
+    # while Brussels-Central has a lower mean and the worst rate (many, small).
+    # Those two failure modes need different operational answers.
+    hubs = [
+        slicer(20, ROW1, 220, 240, D, "station_name", title="Hubs to compare"),
+        slicer(20, 270, 220, 180, D, "day_type", title="Day type"),
+        slicer(20, 460, 220, 170, D, "peak_window", title="Peak window"),
+        visual("clusteredBarChart", 252, ROW1, 500, 300,
+               {"Category": [{"t": D, "c": "station_name"}],
+                "Y": [{"t": D, "m": "On-Time Rate %"}]},
+               title="On-time rate — many small delays show up here", color=BRAND,
+               sort=({"t": D, "m": "On-Time Rate %"}, "desc")),
+        visual("clusteredBarChart", 764, ROW1, 496, 300,
+               {"Category": [{"t": D, "c": "station_name"}],
+                "Y": [{"t": D, "m": "Mean delay min"}]},
+               title="Mean delay — a few severe delays show up here", color=ALERT,
+               sort=({"t": D, "m": "Mean delay min"}, "desc")),
+        visual("scatterChart", 252, 330, 500, 300,
+               {"Category": [{"t": D, "c": "station_name"}],
+                "X": [{"t": D, "m": "Departures"}],
+                "Y": [{"t": D, "m": "Mean delay min"}]},
+               title="Volume against delay"),
+        visual("tableEx", 764, 330, 496, 300,
+               {"Values": [{"t": D, "c": "station_name"}, {"t": D, "m": "Departures"},
+                           {"t": D, "m": "On-Time Rate %"}, {"t": D, "m": "Mean delay min"},
+                           {"t": D, "m": "Delay minutes"}, {"t": D, "m": "Share of delay %"},
+                           {"t": D, "m": "Reliability score"}]},
+               title="Hub leaderboard"),
+    ]
+    pages.append(page(HUBS, "Hub comparison", hubs + nav_bar(HUBS)))
+
+    # ======================================================================
+    # 6. Delay evolution — only possible because the pipeline re-polls
+    # ======================================================================
+    evolution = [
         visual("card", 20, ROW1, 300, CARD_H,
-               {"Values": [{"t": D, "m": "Delay growth s"}]}, title="Mean delay growth (s)"),
+               {"Values": [{"t": D, "m": "Delay growth s"}]},
+               title="Mean delay growth (s)", color=ALERT),
         visual("card", 330, ROW1, 300, CARD_H,
-               {"Values": [{"t": D, "m": "Deteriorated 5min+"}]}, title="Deteriorated by 5+ min"),
+               {"Values": [{"t": D, "m": "Deteriorated 5min+"}]},
+               title="Deteriorated by 5+ min", color=ALERT),
         visual("donutChart", 660, ROW1, 600, 300,
                {"Category": [{"t": D, "c": "delay_bucket"}],
                 "Y": [{"t": D, "m": "Departures"}]},
                title="Where delays end up"),
-        visual("tableEx", 20, 340, 1240, 360,
+        visual("tableEx", 20, 340, 1240, 310,
                {"Values": [{"t": D, "c": "station_name"}, {"t": D, "c": "vehicle_name"},
                            {"t": D, "c": "destination_name"},
                            {"t": D, "c": "scheduled_departure_local"},
                            {"t": D, "c": "delay_first_seen_s"}, {"t": D, "c": "delay_seconds"},
                            {"t": D, "c": "delay_growth_s"}, {"t": D, "c": "observation_count"}]},
                title="First reading against latest — visible only because each train is re-polled"),
-    ]))
+    ]
+    pages.append(page(EVOLUTION, "Delay evolution", evolution + nav_bar(EVOLUTION)))
 
-    # ---- Services & destinations -----------------------------------------
-    pages.append(page("ReportSectionServices", "Services & destinations", [
-        visual("scatterChart", 20, ROW1, 620, 330,
-               {"Category": [{"t": D, "c": "vehicle_type"}],
-                "X": [{"t": D, "m": "Departures"}],
-                "Y": [{"t": D, "m": "Mean delay s"}]},
-               title="Service class: volume against delay"),
-        visual("clusteredBarChart", 660, ROW1, 600, 330,
+    # ======================================================================
+    # 7. Services & destinations
+    # ======================================================================
+    services = [
+        slicer(20, ROW1, 220, 300, D, "destination_name", title="Destination"),
+        visual("clusteredBarChart", 252, ROW1, 1008, 300,
                {"Category": [{"t": D, "c": "destination_name"}],
                 "Y": [{"t": D, "m": "Departures"}]},
-               title="Busiest destinations", sort=({"t": D, "m": "Departures"}, "desc")),
-        visual("tableEx", 20, 370, 1240, 330,
-               {"Values": [{"t": D, "c": "vehicle_type"}, {"t": D, "m": "Departures"},
-                           {"t": D, "m": "Mean delay s"}, {"t": D, "m": "On time 6min %"},
+               title="Busiest destinations", color=INK,
+               sort=({"t": D, "m": "Departures"}, "desc")),
+        visual("scatterChart", 20, 330, 620, 300,
+               {"Category": [{"t": D, "c": "destination_name"}],
+                "X": [{"t": D, "m": "Departures"}],
+                "Y": [{"t": D, "m": "Mean delay min"}]},
+               title="Destination: volume against delay"),
+        visual("tableEx", 660, 330, 600, 300,
+               {"Values": [{"t": D, "c": "destination_name"}, {"t": D, "m": "Departures"},
+                           {"t": D, "m": "Mean delay min"}, {"t": D, "m": "On-Time Rate %"},
                            {"t": D, "m": "Cancelled %"}]},
-               title="By service class"),
-    ]))
+               title="By destination"),
+    ]
+    pages.append(page(SERVICES, "Services & destinations", services + nav_bar(SERVICES)))
 
-    # ---- Data quality & pipeline ------------------------------------------
-    pages.append(page("ReportSectionQuality", "Data quality & pipeline", [
+    # ======================================================================
+    # 8. Data quality & pipeline
+    # ======================================================================
+    # On the report rather than in an appendix: the capture window is partial by
+    # design, and a reader who does not know that will over-read every other page.
+    quality = [
         visual("card", 20, ROW1, 300, CARD_H,
-               {"Values": [{"t": Q, "c": "row_count", "agg": 0}]}, title="Rows"),
+               {"Values": [{"t": Q, "c": "row_count", "agg": 0}]}, title="Rows", color=INK),
         visual("card", 330, ROW1, 300, CARD_H,
                {"Values": [{"t": Q, "c": "pct_platform_unknown", "agg": 1}]},
-               title="Platform unknown %"),
+               title="Platform unknown %", color=WARN),
         visual("card", 640, ROW1, 300, CARD_H,
                {"Values": [{"t": Q, "c": "pct_occupancy_unknown", "agg": 1}]},
-               title="Occupancy unreported %"),
+               title="Occupancy unreported %", color=WARN),
         visual("card", 950, ROW1, 310, CARD_H,
-               {"Values": [{"t": Q, "c": "observed_once", "agg": 0}]}, title="Seen only once"),
-        visual("tableEx", 20, 145, 1240, 285,
+               {"Values": [{"t": Q, "c": "observed_once", "agg": 0}]},
+               title="Seen only once", color=RULE),
+        visual("tableEx", 20, 145, 1240, 250,
                {"Values": [{"t": P, "c": "station_name"}, {"t": P, "c": "last_run_status"},
                            {"t": P, "c": "last_run_departures"},
                            {"t": P, "c": "minutes_since_last_run"},
                            {"t": P, "c": "runs_last_24h"}, {"t": P, "c": "failures_last_24h"}]},
                title="Pipeline freshness by station"),
-        visual("tableEx", 20, 445, 1240, 255,
+        visual("tableEx", 20, 405, 1240, 245,
                {"Values": [{"t": Q, "c": "distinct_dates", "agg": 0},
                            {"t": Q, "c": "distinct_stations", "agg": 0},
                            {"t": Q, "c": "avg_observations", "agg": 1},
                            {"t": Q, "c": "confirmed_departed", "agg": 0}]},
-               title="Coverage"),
-    ]))
+               title="Coverage — the pipeline samples weekday peaks only, by design"),
+    ]
+    pages.append(page(QUALITY, "Data quality & pipeline", quality + nav_bar(QUALITY)))
 
     return pages
 
@@ -430,17 +653,57 @@ def report_definition(dataset_id: str) -> dict:
         "pbiModelVirtualServerName": "sobe_wowvirtualserver",
         "pbiModelDatabaseName": dataset_id, "name": "EntityDataSource",
         "connectionType": "pbiServiceXmlaStyleLive"}}}
-    report = {"config": json.dumps({"version": "5.43", "themeCollection": {}}),
-              "layoutOptimization": 0, "resourcePackages": [],
-              "sections": build_pages(), "filters": "[]"}
+    # The custom theme is a REGISTERED RESOURCE: a separate part, referenced from
+    # report.json by resource-item name. The service rewrites that item name to
+    # the file name on upload, so both are "RailPulse.json" here — naming the item
+    # "RailPulse" leaves the reference pointing at something that no longer
+    # exists, and the theme silently does not apply. Every visual also carries its
+    # own colour, so the palette holds either way.
+    theme_file = "RailPulse.json"
+    report = {
+        "config": json.dumps({"version": "5.43",
+                              "themeCollection": {"customTheme": {"name": theme_file}}}),
+        "layoutOptimization": 0,
+        "resourcePackages": [{"resourcePackage": {
+            "disabled": False, "name": "RegisteredResources", "type": 1,
+            "items": [{"name": theme_file, "path": theme_file, "type": 202}]}}],
+        "sections": build_pages(), "filters": "[]",
+    }
 
-    parts = {".platform": platform, "definition.pbir": pbir, "report.json": report}
+    parts = {".platform": platform, "definition.pbir": pbir, "report.json": report,
+             f"StaticResources/RegisteredResources/{theme_file}": THEME}
     return {"displayName": REPORT_NAME, "type": "Report", "definition": {"parts": [
         {"path": path, "payload": b64(obj), "payloadType": "InlineBase64"}
         for path, obj in parts.items()]}}
 
 
 # ==========================================================================
+def model_is_current(pbi: str, dataset_id: str) -> bool:
+    """Does the existing model already define every measure this report needs?
+
+    This matters more than it looks. A push dataset's measures can only be set at
+    creation, so a changed measure set means dropping and recreating the dataset —
+    and **deleting a push dataset cascade-deletes every report bound to it**. The
+    report is then rebuilt with a NEW id, so the URL changes. For a dashboard whose
+    whole deliverable is a link someone has bookmarked, silently churning that link
+    on every run is the wrong default.
+
+    So: ask Power BI's own DAX engine to evaluate all of them at once. If the query
+    succeeds the model is current and can be reused, leaving the report — and its
+    URL — untouched. If a measure is missing the query fails and the rebuild is
+    genuinely necessary.
+    """
+    names = [m["name"] for measures in MEASURES.values() for m in measures]
+    row = ", ".join(f'"m{i}", [{name}]' for i, name in enumerate(names))
+    try:
+        result = call(pbi, "POST",
+                      f"{PBI_API}/datasets/{dataset_id}/executeQueries",
+                      {"queries": [{"query": f"EVALUATE ROW({row})"}]}, attempts=1)
+    except SystemExit:
+        return False
+    return bool(result.get("results"))
+
+
 def push_rows(env: dict[str, str], pbi: str, dataset_id: str) -> int:
     try:
         import pymssql
@@ -478,8 +741,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--data-only", action="store_true",
                         help="refresh the rows, leave the model and report alone")
-    parser.add_argument("--keep-model", action="store_true",
-                        help="reuse the existing model instead of rebuilding it")
+    parser.add_argument("--rebuild-model", action="store_true",
+                        help="drop and recreate the model even if it is current "
+                             "(this changes the report URL — see model_is_current)")
     parser.add_argument("--url", action="store_true", help="print the report URL and exit")
     args = parser.parse_args(argv)
 
@@ -505,12 +769,15 @@ def main(argv: list[str] | None = None) -> int:
     dataset_id = datasets.get(DATASET_NAME)
 
     # A push dataset's measures can only be set AT CREATION — there is no API to
-    # add them afterwards — so a model that predates them has to be rebuilt. The
-    # report is a separate item, so its URL survives this.
-    if dataset_id and not (args.keep_model or args.data_only):
-        call(pbi, "DELETE", f"{PBI_API}/datasets/{dataset_id}")
-        print(f"  dropped the previous model ({dataset_id}) — measures are creation-time only")
-        dataset_id = None
+    # add them afterwards — so a changed measure set forces a rebuild. Dropping
+    # the dataset also destroys every report bound to it, which changes the
+    # report URL, so it is only done when the model is genuinely out of date.
+    if dataset_id and not args.data_only:
+        if args.rebuild_model or not model_is_current(pbi, dataset_id):
+            reason = "forced" if args.rebuild_model else "measures are out of date"
+            call(pbi, "DELETE", f"{PBI_API}/datasets/{dataset_id}")
+            print(f"  dropped the previous model ({reason}) — the report URL will change")
+            dataset_id = None
 
     if not dataset_id:
         payload = {"name": DATASET_NAME, "defaultMode": "Push",

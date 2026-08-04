@@ -1,0 +1,87 @@
+table dim_date
+
+	column date_key
+		dataType: dateTime
+		sourceColumn: date_key
+		lineageTag: 6db137ad-f0a6-5dbd-84de-5e219ef2b249
+
+	column year_number
+		dataType: int64
+		sourceColumn: year_number
+		lineageTag: 4cb8338e-986a-5bce-bb9d-5d6ae35a2e1e
+
+	column quarter_number
+		dataType: int64
+		sourceColumn: quarter_number
+		lineageTag: 02801b1f-8a90-57c3-b24f-81ee303ccfbe
+
+	column month_number
+		dataType: int64
+		sourceColumn: month_number
+		lineageTag: bbd0f507-6a50-51c7-9d81-3a3e4a5e5758
+
+	column day_of_month
+		dataType: int64
+		sourceColumn: day_of_month
+		lineageTag: 07ff55d5-3159-50aa-95dc-09fc047fc6c8
+
+	column day_of_week_iso
+		dataType: int64
+		sourceColumn: day_of_week_iso
+		lineageTag: 7e4eaf5d-1602-51f5-aa98-61949f467b41
+
+	column iso_week
+		dataType: int64
+		sourceColumn: iso_week
+		lineageTag: ea3a5c8e-6e95-5376-856d-3174b0fe148e
+
+	column month_name
+		dataType: string
+		sourceColumn: month_name
+		lineageTag: 48012d6b-dd58-5bd6-8c2c-147d17cbd365
+
+	column month_short
+		dataType: string
+		sourceColumn: month_short
+		lineageTag: b87b19e8-c4c6-5c6d-a0fd-6a2a15f9d676
+
+	column day_name
+		dataType: string
+		sourceColumn: day_name
+		lineageTag: 6a0a7490-267d-5341-b1e3-700d6a6b9b2c
+
+	column day_short
+		dataType: string
+		sourceColumn: day_short
+		lineageTag: 1fa738ea-ec6e-5395-98a9-99377a4b772f
+
+	column year_month
+		dataType: string
+		sourceColumn: year_month
+		lineageTag: 1f07f4e6-9ce1-5226-9ca6-8c06b3f47401
+
+	column year_month_sort
+		dataType: int64
+		sourceColumn: year_month_sort
+		lineageTag: c020489e-44a5-5ea8-bd72-daefa497651f
+
+	column is_weekend
+		dataType: boolean
+		sourceColumn: is_weekend
+		lineageTag: 617ad46c-ecc1-50a8-b020-4a8900ec9c28
+
+	column is_capture_day
+		dataType: boolean
+		sourceColumn: is_capture_day
+		lineageTag: 4af862ac-0cde-50dc-9d75-6ee0ceeae4cf
+
+	partition dim_date = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(ServerName, DatabaseName),
+				    Data = Source{[Schema="dbo",Item="dim_date"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

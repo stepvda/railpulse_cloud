@@ -1,0 +1,57 @@
+table pipeline_health
+
+	column station_name
+		dataType: string
+		sourceColumn: station_name
+		lineageTag: f3580983-3da4-5ba3-85de-e3685671fa71
+
+	column last_run_status
+		dataType: string
+		sourceColumn: last_run_status
+		lineageTag: 07eef033-92b0-5426-9b26-e97ec8f92f9b
+
+	column last_run_departures
+		dataType: int64
+		sourceColumn: last_run_departures
+		lineageTag: cee4d177-32c7-5621-8e15-53b79961087e
+
+	column last_run_inserted
+		dataType: int64
+		sourceColumn: last_run_inserted
+		lineageTag: 13880575-bf49-5d44-86e3-24cd9adc013c
+
+	column last_run_updated
+		dataType: int64
+		sourceColumn: last_run_updated
+		lineageTag: 6e204825-6b98-5fe5-b2c5-aad75132f798
+
+	column minutes_since_last_run
+		dataType: int64
+		sourceColumn: minutes_since_last_run
+		lineageTag: de9fdf10-d854-5d6c-b762-a5d9972cd731
+
+	column is_stale
+		dataType: boolean
+		sourceColumn: is_stale
+		lineageTag: 69f44e8c-e9b3-5daa-8d02-b2f8cc09ce66
+
+	column failures_last_24h
+		dataType: int64
+		sourceColumn: failures_last_24h
+		lineageTag: efb2dcf5-270e-5d61-9f1f-c018aa852bce
+
+	column runs_last_24h
+		dataType: int64
+		sourceColumn: runs_last_24h
+		lineageTag: b759bb1f-5b8c-5eef-b774-152fff0aaebe
+
+	partition pipeline_health = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(ServerName, DatabaseName),
+				    Data = Source{[Schema="dbo",Item="v_ingestion_health"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

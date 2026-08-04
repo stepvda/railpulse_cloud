@@ -1,0 +1,62 @@
+table data_quality
+
+	column row_count
+		dataType: int64
+		sourceColumn: row_count
+		lineageTag: 52ea71fc-b32a-5d25-a983-44f2fda924ce
+
+	column distinct_dates
+		dataType: int64
+		sourceColumn: distinct_dates
+		lineageTag: ad4245a1-b6b2-556b-819f-0df1bae76fc9
+
+	column distinct_stations
+		dataType: int64
+		sourceColumn: distinct_stations
+		lineageTag: e8c31466-cc9f-5c51-930e-90a7811bd134
+
+	column platform_unknown
+		dataType: int64
+		sourceColumn: platform_unknown
+		lineageTag: 0eb3d895-622b-5564-8bba-aca94aa05962
+
+	column pct_platform_unknown
+		dataType: double
+		sourceColumn: pct_platform_unknown
+		lineageTag: 07c48f37-2d69-5ba1-bb1c-105c689b1360
+
+	column occupancy_unknown
+		dataType: int64
+		sourceColumn: occupancy_unknown
+		lineageTag: a5ff766e-7a31-5386-83e8-4cc8e345ada7
+
+	column pct_occupancy_unknown
+		dataType: double
+		sourceColumn: pct_occupancy_unknown
+		lineageTag: 3831dd51-4997-56f9-9aa0-904900020d3c
+
+	column observed_once
+		dataType: int64
+		sourceColumn: observed_once
+		lineageTag: d2246f7b-4c41-5894-aa31-03d611844117
+
+	column avg_observations
+		dataType: double
+		sourceColumn: avg_observations
+		lineageTag: 28ade1e0-29f6-5b52-b5ca-8be99bb7eae7
+
+	column confirmed_departed
+		dataType: int64
+		sourceColumn: confirmed_departed
+		lineageTag: 015bd9ed-eee3-51b0-9e3b-dd2327c8dcf0
+
+	partition data_quality = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(ServerName, DatabaseName),
+				    Data = Source{[Schema="dbo",Item="v_data_quality"]}[Data]
+				in
+				    Data
+
+	annotation PBI_ResultType = Table

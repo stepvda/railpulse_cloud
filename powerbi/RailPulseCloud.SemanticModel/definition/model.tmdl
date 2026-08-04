@@ -1,0 +1,24 @@
+model Model
+	culture: en-GB
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-GB
+
+	annotation PBI_QueryOrder = ["departures", "dim_date", "dim_hour", "pipeline_health", "data_quality"]
+
+ref table departures
+ref table dim_date
+ref table dim_hour
+ref table pipeline_health
+ref table data_quality
+
+ref expression ServerName
+ref expression DatabaseName
+
+relationship departures_to_date
+	fromColumn: departures.date_key
+	toColumn: dim_date.date_key
+
+relationship departures_to_hour
+	fromColumn: departures.hour_of_day
+	toColumn: dim_hour.hour_of_day

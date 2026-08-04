@@ -144,6 +144,59 @@ TABLES: tuple[tuple[str, str, dict[str, str]], ...] = (
     }),
 )
 
+#: DAX measures, defined in the MODEL rather than in each visual, so that every
+#: report over this dataset shares one definition of "on time" — the same reason
+#: sql/03_views.sql exists. They restate the view definitions in DAX, including
+#: the rule that matters most: cancellations are excluded from punctuality
+#: denominators. That falls out of COUNTA, because the views store NULL in the
+#: flags for a cancelled train rather than 0.
+#:
+#: scripts/build_powerbi_report.py imports these; keeping them here means the
+#: model has them whichever script creates it.
+MEASURES: dict[str, tuple[dict[str, str], ...]] = {
+    "departures": (
+        {"name": "Departures", "expression": "COUNTROWS('departures')"},
+        {"name": "Cancellations",
+         "expression": "CALCULATE(COUNTROWS('departures'), 'departures'[is_canceled] = TRUE())"},
+        {"name": "Trains measured", "expression": "COUNTA('departures'[is_on_time_6min])"},
+        {"name": "On time 6min %",
+         "expression": ("DIVIDE(CALCULATE(COUNTA('departures'[is_on_time_6min]), "
+                        "'departures'[is_on_time_6min] = TRUE()), "
+                        "COUNTA('departures'[is_on_time_6min]))"),
+         "formatString": "0.0%"},
+        {"name": "On time 2min %",
+         "expression": ("DIVIDE(CALCULATE(COUNTA('departures'[is_on_time_2min]), "
+                        "'departures'[is_on_time_2min] = TRUE()), "
+                        "COUNTA('departures'[is_on_time_2min]))"),
+         "formatString": "0.0%"},
+        {"name": "Mean delay s",
+         "expression": ("CALCULATE(AVERAGE('departures'[delay_seconds]), "
+                        "'departures'[is_canceled] = FALSE())"),
+         "formatString": "0.0"},
+        {"name": "Cancelled %", "expression": "DIVIDE([Cancellations], [Departures])",
+         "formatString": "0.0%"},
+        {"name": "Platform changes",
+         "expression": ("CALCULATE(COUNTROWS('departures'), "
+                        "'departures'[platform_is_normal] = FALSE())")},
+        {"name": "Reliability score",
+         "expression": ("DIVIDE(CALCULATE(COUNTA('departures'[is_on_time_6min]), "
+                        "'departures'[is_on_time_6min] = TRUE()) - [Cancellations], "
+                        "COUNTA('departures'[is_on_time_6min]))"),
+         "formatString": "0.0%"},
+        {"name": "Days observed", "expression": "DISTINCTCOUNT('departures'[date_key])"},
+        # Never rank hours on a raw count. The timer samples peak windows harder
+        # than the rest of the day, so a raw count would report the CAPTURE
+        # SCHEDULE as the peak — circular. Normalising by days observed is the
+        # same correction v_hourly_pressure.departures_per_day makes in SQL.
+        {"name": "Departures per day", "expression": "DIVIDE([Departures], [Days observed])",
+         "formatString": "0.0"},
+        {"name": "Delay growth s", "expression": "AVERAGE('departures'[delay_growth_s])",
+         "formatString": "0.0"},
+        {"name": "Deteriorated 5min+",
+         "expression": "CALCULATE(COUNTROWS('departures'), 'departures'[delay_growth_s] > 300)"},
+    ),
+}
+
 #: Relationships, so the model works the moment it lands rather than after the
 #: reader has guessed which columns join. Push datasets accept these at creation.
 RELATIONSHIPS = (
@@ -283,15 +336,18 @@ def main(argv: list[str] | None = None) -> int:
             "defaultMode": "Push",
             "tables": [
                 {"name": name,
-                 "columns": [{"name": c, "dataType": t} for c, t in columns.items()]}
+                 "columns": [{"name": c, "dataType": t} for c, t in columns.items()],
+                 "measures": list(MEASURES.get(name, ()))}
                 for name, _, columns in TABLES
             ],
             "relationships": list(RELATIONSHIPS),
         }
         created = api(token, "POST", "/datasets", payload)
         dataset_id = created["id"]
+        measure_count = sum(len(m) for m in MEASURES.values())
         print(f"  created dataset '{DATASET_NAME}' ({dataset_id})")
-        print(f"  {len(TABLES)} tables, {len(RELATIONSHIPS)} relationships")
+        print(f"  {len(TABLES)} tables, {len(RELATIONSHIPS)} relationships, "
+              f"{measure_count} measures")
     else:
         print(f"  reusing dataset '{DATASET_NAME}' ({dataset_id})")
 

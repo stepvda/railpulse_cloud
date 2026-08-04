@@ -26,8 +26,8 @@ that next week's Power BI dashboard has real delays to draw.
 | **Cost while running** | ~$54/month, of which 97% is SQL compute · **~$0.28/month paused**                  |
 | **Region**             | France Central — nearest region this student subscription's policy allows          |
 | **Dashboard**          | Streamlit on App Service (F1 Free), reading the BI views                            |
-| **Power BI**           | free, web client — least-privilege login, date dimension, DAX measures ready         |
-| **Tests**              | 195, offline, ~1 s — no Azure subscription needed                                    |
+| **Power BI**           | free, web client — a **7-page report generated via the API**, mirroring the dashboard |
+| **Tests**              | 214, offline, ~2 s — no Azure subscription needed                                    |
 
 ---
 
@@ -52,7 +52,7 @@ flowchart LR
     end
 
     subgraph bi["Power BI (free licence, web client)"]
-        PBI["Semantic model — IMPORT<br/>refresh 1-2x/day"]
+        PBI["Semantic model + 13 DAX measures<br/>7-page report, built via the API"]
     end
 
     subgraph next["Sprint 4"]
@@ -82,7 +82,7 @@ Azure subscription.
 ```bash
 # 0. Once: the toolchain and an offline test run
 brew install azure-cli
-make venv && make test           # 195 tests, no cloud needed
+make venv && make test           # 214 tests, no cloud needed
 
 # 1. Create everything, with the cost settings baked in
 az login                         # the @becode.education account
@@ -403,21 +403,47 @@ verified via Graph, so nothing needs buying. Full guide:
 
 **There is no URL that pre-wires a Power BI web connection to a database** — the
 only pre-filled-connection artifact Power BI has is a `.pbids` file, which opens
-Desktop. So there are two routes, and `make bi-publish` is the one that produces a
+Desktop. So there are two routes, and `make bi-report` is the one that produces a
 link:
 
-| | **push dataset** (`make bi-publish`) | **Azure SQL connection** (interactive) |
+| | **scripted** (`make bi-report`) | **Azure SQL connection** (interactive) |
 | --- | --- | --- |
-| gives you | a working URL in ~30 s | a live, self-refreshing model |
+| gives you | a 7-page report, built | a live, self-refreshing model |
 | data | snapshot — re-run to refresh | Import + scheduled refresh |
 | licence | Free ✅ | Free ✅ |
 
-The scripted route is already done and verified: five tables (3,578 departures,
-`dim_date`, `dim_hour`, pipeline health, data quality) with both relationships
-defined, pushed via the Power BI REST API. Confirmed by asking **Power BI's own
-DAX engine** through `executeQueries` rather than trusting the upload — it returns
-Brussels-Central 661 departures at 62.3 s mean delay, Ghent 73.9 s. `make bi-url`
-prints the link.
+### The report is generated, not hand-built
+
+Because Power BI Desktop is Windows-only, the alternative to writing a
+click-by-click guide was to build the report through the API — so
+`scripts/build_powerbi_report.py` creates **the same seven pages the Streamlit app
+has**: Overview, Hub leaderboard, Peak hours, Platform bottlenecks, Delay
+evolution, Services & destinations, and Data quality & pipeline. 31 visuals, and
+13 DAX measures defined **on the semantic model rather than per-visual**, so every
+visual shares one definition of "on time" — the same argument the views make in
+SQL and `powerbi_reader` makes in permissions.
+
+Verified by asking **Power BI's own DAX engine** through `executeQueries` and
+comparing every figure with the warehouse, rather than trusting the upload:
+
+```
+metric            Azure SQL     Power BI          metric        Azure SQL   Power BI
+Departures             8753         8753          PlatChg             955        955
+OnTime6              0.9645       0.9645          DaysObs               6          6
+OnTime2              0.9257       0.9257          Growth          21.2156    21.2156
+MeanDelay            51.146       51.146          Deteriorated        173        173
+Cancelled                18           18                        all 9 agree
+```
+
+Getting the report format right took three attempts, all returning the same
+`MissingDefinitionParts`: a Fabric Report whose `definition.pbir` declares
+`"version": "1.0"` selects the **legacy** layout and wants a single root-level
+`report.json` — not the enhanced `definition/pages/…` part set, and not no layout
+at all. Inside it, `config` and `filters` are JSON-encoded **strings**; passing a
+real object is accepted silently and renders a blank report. That is exactly the
+kind of failure a test has to catch, so
+[`tests/test_powerbi_report.py`](tests/test_powerbi_report.py) pins all of it —
+19 tests, each confirmed to fail when its invariant is deliberately broken.
 
 Three things were added on the Azure side to make it correct rather than merely
 possible:
@@ -550,8 +576,9 @@ None of those are bugs and none should lose a poll. So:
 │   ├── local_cli.py              # run the pipeline / the analysis SQL from a laptop
 │   ├── create_bi_reader.py       # least-privilege SQL login for Power BI
 │   ├── publish_powerbi_dataset.py# push the warehouse into Power BI
+│   ├── build_powerbi_report.py   # generate the 7-page Power BI report
 │   └── load_schedule_baseline.py # load sprint 1's timetable as a baseline
-├── tests/                        # 118 offline tests + 3 recorded API payloads
+├── tests/                        # 214 offline tests + 3 recorded API payloads
 └── docs/
     ├── schema.md                 # the schema, at length
     ├── cost_control.md           # the arithmetic

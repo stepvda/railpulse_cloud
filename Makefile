@@ -132,11 +132,17 @@ webapp-local:  ## Run the dashboard on this machine against Azure SQL
 bi-reader:  ## Create/refresh the least-privilege SQL login for Power BI
 	set -a; . ./$(SECRET_FILE); set +a; $(PYTHON) scripts/create_bi_reader.py
 
-bi-publish:  ## Push the warehouse into a Power BI dataset and print its URL
-	$(PYTHON) scripts/publish_powerbi_dataset.py
+bi-report:  ## Build the 7-page Power BI report (model + measures + data) and print its URL
+	$(PYTHON) scripts/build_powerbi_report.py
 
-bi-url:  ## Print the Power BI dataset URL
-	@$(PYTHON) scripts/publish_powerbi_dataset.py --url
+bi-refresh:  ## Re-push the rows into the existing Power BI model, nothing else
+	$(PYTHON) scripts/build_powerbi_report.py --data-only
+
+bi-url:  ## Print the Power BI report URL
+	@$(PYTHON) scripts/build_powerbi_report.py --url
+
+bi-publish:  ## Push the warehouse into a Power BI dataset only (no report)
+	$(PYTHON) scripts/publish_powerbi_dataset.py
 
 # ---------------------------------------------------------------------------
 # Cost control

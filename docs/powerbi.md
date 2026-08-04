@@ -55,10 +55,10 @@ interactive flow with no documented deep link and no query-string parameters. No
 script can route around that; what a script *can* do is create the dataset itself
 through the REST API.
 
-| | **A — push dataset (scripted)** | **B — Azure SQL connection (interactive)** |
+| | **A — scripted (model *and* report)** | **B — Azure SQL connection (interactive)** |
 |---|---|---|
-| how | `python scripts/publish_powerbi_dataset.py` | click through the web client |
-| you get | a working URL in ~30 s | a live, self-refreshing model |
+| how | `python scripts/build_powerbi_report.py` | click through the web client |
+| you get | a 7-page report, built | a live, self-refreshing model |
 | data | **snapshot** — re-run to refresh | Import + scheduled refresh, 1–2×/day |
 | licence | Free ✅ | Free ✅ |
 | gateway | none | none (Azure SQL is a cloud source) |
@@ -71,9 +71,13 @@ cannot produce one without a human in the wizard.
 
 ```bash
 python scripts/create_bi_reader.py          # once: the least-privilege login
-python scripts/publish_powerbi_dataset.py   # create + populate the dataset
-python scripts/publish_powerbi_dataset.py --url   # print the URL again later
+python scripts/build_powerbi_report.py      # model + measures + data + report
+python scripts/build_powerbi_report.py --url        # print the URL again later
+python scripts/build_powerbi_report.py --data-only  # refresh the rows only
 ```
+
+`publish_powerbi_dataset.py` is the same thing without the report, if all you
+want is the dataset.
 
 It reads the BI views **as `powerbi_reader`** (so it also proves that login is
 sufficient for the whole BI surface) and pushes five tables with both
@@ -100,13 +104,89 @@ EVALUATE TOPN(5, SUMMARIZECOLUMNS(departures[station_name],
   Antwerp-Central               315   30.5 s
 ```
 
-Then open the printed URL → **Create report**, and paste the measures below.
-
 **Route A's limits, plainly.** A push dataset holds a snapshot: it has no
 connection to Azure SQL, so it never refreshes itself — re-run the script. It also
-cannot be marked as a date table through the API, so `TOTALYTD` and friends need
-that one click in the browser (Table tools → Mark as date table → `date_key`), and
-measures must be added in the browser too.
+cannot be marked as a date table through the API, so `TOTALYTD` and friends still
+need that one click in the browser (Table tools → Mark as date table →
+`date_key`).
+
+---
+
+## The report is generated, not hand-built
+
+`scripts/build_powerbi_report.py` creates the **same seven pages the Streamlit app
+has**, as a real Power BI report, through the API. Power BI Desktop is Windows-only,
+so the alternative was a written click-by-click guide — which puts the work back
+on the reader and drifts from the app the moment either side changes.
+
+```
+$ python scripts/build_powerbi_report.py
+  created model (ca329922-…) — 5 tables, 13 measures
+    departures         8753 rows      dim_hour         24 rows
+    dim_date            730 rows      pipeline_health  10 rows
+  created report — 7 pages, 31 visuals
+```
+
+| page | mirrors the Streamlit page | headline visual |
+|---|---|---|
+| Overview | Overview | 6 KPI cards, hour histogram, delay buckets |
+| Hub leaderboard | Hub leaderboard | punctuality by hub, volume-vs-delay scatter |
+| Peak hours | Peak hours | `Departures per day` by hour × day type |
+| Platform bottlenecks | Platform bottlenecks | load and mean delay per platform |
+| Delay evolution | Delay evolution | first reading vs latest, per train |
+| Services & destinations | Services & destinations | service class scatter, top destinations |
+| Data quality & pipeline | Data quality + Pipeline | freshness per station, coverage |
+
+**The measures live in the model, not in the visuals.** All 13 are defined once, on
+the semantic model, so every visual — and any report anyone builds later over the
+same dataset — shares one definition of "on time". That is the same argument
+`create_bi_reader.py` makes with permissions and `03_views.sql` makes with SQL.
+
+Verified rather than assumed, by asking Power BI's own DAX engine and comparing
+with the warehouse:
+
+```
+metric            Azure SQL     Power BI   agree
+Departures             8753         8753   yes
+OnTime6              0.9645       0.9645   yes
+OnTime2              0.9257       0.9257   yes
+MeanDelay            51.146       51.146   yes
+Cancelled                18           18   yes
+PlatChg                 955          955   yes
+DaysObs                   6            6   yes
+Growth              21.2156      21.2156   yes
+Deteriorated            173          173   yes
+```
+
+### The report format, and two dead ends
+
+Written down because the API returns the *same* error for all three cases, so this
+is not deducible from the message. A Fabric Report item is a set of base64 parts:
+
+| attempt | parts | result |
+|---|---|---|
+| 1 | `.platform` + `definition.pbir` | `MissingDefinitionParts` |
+| 2 | PBIR **enhanced** — `definition/pages/<id>/visuals/…` | `MissingDefinitionParts` |
+| 3 | **legacy** — a single root `report.json` | ✅ |
+
+The cause: `definition.pbir` declaring `"version": "1.0"` selects the **legacy**
+format, which wants one root-level `report.json` holding the classic Layout JSON.
+The service then rewrites that field to `"4.0"` itself, which is how you can tell
+the report was genuinely accepted rather than merely stored.
+
+One trap inside the legacy shape: nested `config` and `filters` fields are
+**JSON-encoded strings**, not objects. Passing a real object is accepted without
+complaint and renders a blank report.
+
+Also worth knowing: deleting a dataset and recreating it under the same name
+within a few seconds returns HTTP 500 from Power BI's own store (`Models_V0`, a
+system-versioned temporal table). The identical payload succeeds a minute later,
+so the script retries that status rather than treating it as fatal.
+
+### Route A's remaining manual step
+
+A push dataset cannot be marked as a date table through the API, so open
+**Table tools → Mark as date table → `date_key`** if you want `TOTALYTD`.
 
 ### Route B — the interactive connection
 
@@ -296,7 +376,9 @@ decimals; DAX returns them as ratios.
 
 ## A four-page report that matches the analysis
 
-Mirrors `sql/analysis/` so the Power BI report and the graded SQL answer the same
+Route A already builds seven pages for you (above). This is the **Route B**
+equivalent — what to build by hand on the interactive model, mirroring
+`sql/analysis/` so the Power BI report and the graded SQL answer the same
 questions:
 
 1. **Network overview** — KPI row (`Departures`, `On time (<6 min) %`,
